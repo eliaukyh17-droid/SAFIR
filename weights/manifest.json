@@ -1,66 +1,169 @@
 {
   "schema_version": 1,
-  "status": "initial_reference_source_release_checkpoint_assets_pending",
+  "status": "component_weight_release",
+  "format": "safetensors",
+  "format_version": "safir_component_tensors_v1",
+  "hash_scope": "new exported component file bytes; original parent hashes are recorded separately",
+  "repository": "https://github.com/eliaukyh17-droid/SAFIR",
+  "release_tag": "weights-v0.1.0",
   "paper_candidate": "SAFIR-A32-Controlled",
-  "hash_scope": "original archived file bytes; not future sanitized or consolidated exports",
   "model_implementation_included": false,
+  "standalone_training_or_inference": false,
+  "legacy_archived_loader_compatible": false,
+  "original_archive_released": false,
+  "third_party_pretrained_backbones_included": false,
   "checkpoints": [
     {
       "id": "canonical_tifdfusion",
-      "file": "weights/canonical_tifdfusion.pth",
+      "file": "weights/canonical_tifdfusion_components.safetensors",
       "role": "Frozen canonical TIFDFusion baseline; normal route and source for all smoke stages",
-      "sha256": "b502e5db0a10bc9bf3a6d28fd12949b49fc2d01d8cb47ebe3ca7210ca8b389d2",
-      "download_url": null,
-      "asset_status": "pending_retrieval_and_release_review"
+      "sha256": "9e03ca7ed789e2ec9eedd9a19ef49b28108cbdcc2579ff94f567659d09c827d3",
+      "size_bytes": 169757988,
+      "original_checkpoint_sha256": "b502e5db0a10bc9bf3a6d28fd12949b49fc2d01d8cb47ebe3ca7210ca8b389d2",
+      "state_groups": [
+        {
+          "original_checkpoint_group": "model_state_dict",
+          "exported_key_prefix": "model_state_dict."
+        }
+      ],
+      "tensor_count": 556,
+      "excluded_pretrained_backbone_tensor_count": 719,
+      "excluded_original_state_prefixes": [
+        "prior_extractor.seg_extractor.backbone.",
+        "prior_extractor.det_extractor.backbone."
+      ],
+      "download_url": "https://github.com/eliaukyh17-droid/SAFIR/releases/download/weights-v0.1.0/canonical_tifdfusion_components.safetensors",
+      "retained_tensor_dtype_shape_and_bytes_match_original": true
     },
     {
       "id": "a211",
-      "file": "weights/a211.pth",
+      "file": "weights/a211_components.safetensors",
       "role": "Frozen initial joint-source router and smoke expert",
-      "sha256": "2b5f997e14a6b5ee03853dbfb765eaa0632906fcde72054eff9cae9cdcb098a3",
-      "download_url": null,
-      "asset_status": "pending_retrieval_and_release_review"
+      "sha256": "ed07cda8bb3be079667d9b1a3ffabe8b88da55d9325228069b216a1a2153774f",
+      "size_bytes": 21132492,
+      "original_checkpoint_sha256": "2b5f997e14a6b5ee03853dbfb765eaa0632906fcde72054eff9cae9cdcb098a3",
+      "state_groups": [
+        {
+          "original_checkpoint_group": "router_state_dict",
+          "exported_key_prefix": "router_state_dict."
+        },
+        {
+          "original_checkpoint_group": "expert_state_dict",
+          "exported_key_prefix": "expert_state_dict."
+        }
+      ],
+      "tensor_count": 140,
+      "excluded_pretrained_backbone_tensor_count": 0,
+      "excluded_original_state_prefixes": [],
+      "download_url": "https://github.com/eliaukyh17-droid/SAFIR/releases/download/weights-v0.1.0/a211_components.safetensors",
+      "retained_tensor_dtype_shape_and_bytes_match_original": true
     },
     {
       "id": "a213",
-      "file": "weights/a213.pth",
+      "file": "weights/a213_components.safetensors",
       "role": "Frozen standardized router score head and fitted normalizer",
-      "sha256": "48a325067d9425bb9133f843aa8ba6a41f13199c469c30abdcc69e1c863b66b1",
-      "download_url": null,
-      "asset_status": "pending_retrieval_and_release_review"
+      "sha256": "361877db34f65a299e4bb9979d5755f7cffb9ea19d2572ebe206df5ca8218e75",
+      "size_bytes": 4493,
+      "original_checkpoint_sha256": "48a325067d9425bb9133f843aa8ba6a41f13199c469c30abdcc69e1c863b66b1",
+      "state_groups": [
+        {
+          "original_checkpoint_group": "score_head_state_dict",
+          "exported_key_prefix": "score_head_state_dict."
+        },
+        {
+          "original_checkpoint_group": "standardizer_state_dict",
+          "exported_key_prefix": "standardizer_state_dict."
+        }
+      ],
+      "tensor_count": 5,
+      "excluded_pretrained_backbone_tensor_count": 0,
+      "excluded_original_state_prefixes": [],
+      "download_url": "https://github.com/eliaukyh17-droid/SAFIR/releases/download/weights-v0.1.0/a213_components.safetensors",
+      "retained_tensor_dtype_shape_and_bytes_match_original": true
     },
     {
       "id": "a215",
-      "file": "weights/a215.pth",
+      "file": "weights/a215_components.safetensors",
       "role": "Frozen low/high frequency residual refiner",
-      "sha256": "48278cf7c7ea1fecc6c5a36a0462b3ac53f950f7be854e07c0463cd7983e7893",
-      "download_url": null,
-      "asset_status": "pending_retrieval_and_release_review"
+      "sha256": "e7b136d386f0cb408c5e8abce63056e9fb7cbd0d04ea13100576d70243fcc0c0",
+      "size_bytes": 32840,
+      "original_checkpoint_sha256": "48278cf7c7ea1fecc6c5a36a0462b3ac53f950f7be854e07c0463cd7983e7893",
+      "state_groups": [
+        {
+          "original_checkpoint_group": "refiner_state_dict",
+          "exported_key_prefix": "refiner_state_dict."
+        }
+      ],
+      "tensor_count": 17,
+      "excluded_pretrained_backbone_tensor_count": 0,
+      "excluded_original_state_prefixes": [],
+      "download_url": "https://github.com/eliaukyh17-droid/SAFIR/releases/download/weights-v0.1.0/a215_components.safetensors",
+      "retained_tensor_dtype_shape_and_bytes_match_original": true
     },
     {
       "id": "a217",
-      "file": "weights/a217.pth",
+      "file": "weights/a217_components.safetensors",
       "role": "Frozen mask-supervised support predictor",
-      "sha256": "57e5a420a55d06db1d5c2565dff01ce7c11ca4fcf8f11122577a087fcce36311",
-      "download_url": null,
-      "asset_status": "pending_retrieval_and_release_review"
+      "sha256": "0a38bea02ae3dc97de29ff9c6c9104e37341d23ece30d649de613fa010f1a4fd",
+      "size_bytes": 23932,
+      "original_checkpoint_sha256": "57e5a420a55d06db1d5c2565dff01ce7c11ca4fcf8f11122577a087fcce36311",
+      "state_groups": [
+        {
+          "original_checkpoint_group": "predictor_state_dict",
+          "exported_key_prefix": "predictor_state_dict."
+        }
+      ],
+      "tensor_count": 15,
+      "excluded_pretrained_backbone_tensor_count": 0,
+      "excluded_original_state_prefixes": [],
+      "download_url": "https://github.com/eliaukyh17-droid/SAFIR/releases/download/weights-v0.1.0/a217_components.safetensors",
+      "retained_tensor_dtype_shape_and_bytes_match_original": true
     },
     {
       "id": "a219",
-      "file": "weights/a219.pth",
+      "file": "weights/a219_components.safetensors",
       "role": "Frozen dual-support benefit rescue controller",
-      "sha256": "8e74e40c6f08dbb3317a8fed7ce7ff7d8051379368a7c503ec9a2f0ceff71046",
-      "download_url": null,
-      "asset_status": "pending_retrieval_and_release_review"
+      "sha256": "9d6c4e26965262ca50e3746a41f86faae8c83170438e9f241d2ee710fceb9424",
+      "size_bytes": 83504,
+      "original_checkpoint_sha256": "8e74e40c6f08dbb3317a8fed7ce7ff7d8051379368a7c503ec9a2f0ceff71046",
+      "state_groups": [
+        {
+          "original_checkpoint_group": "controller_state_dict",
+          "exported_key_prefix": "controller_state_dict."
+        }
+      ],
+      "tensor_count": 42,
+      "excluded_pretrained_backbone_tensor_count": 0,
+      "excluded_original_state_prefixes": [],
+      "download_url": "https://github.com/eliaukyh17-droid/SAFIR/releases/download/weights-v0.1.0/a219_components.safetensors",
+      "retained_tensor_dtype_shape_and_bytes_match_original": true
     },
     {
       "id": "a223",
-      "file": "weights/a223.pth",
+      "file": "weights/a223_components.safetensors",
       "role": "Final frozen dual semantic localization/utility predictor used by SAFIR-A32-Controlled",
-      "sha256": "3e41a0765c79bb28667e0c7c006aab6ad075fd5c2b4314a0266aa67542675902",
-      "download_url": null,
-      "asset_status": "pending_retrieval_and_release_review"
+      "sha256": "41413e9596bb1f407b0c5094aacb29b99bd7d9d39cc6a79a317d8a9575f8f735",
+      "size_bytes": 82376,
+      "original_checkpoint_sha256": "3e41a0765c79bb28667e0c7c006aab6ad075fd5c2b4314a0266aa67542675902",
+      "state_groups": [
+        {
+          "original_checkpoint_group": "predictor_state_dict",
+          "exported_key_prefix": "predictor_state_dict."
+        }
+      ],
+      "tensor_count": 32,
+      "excluded_pretrained_backbone_tensor_count": 0,
+      "excluded_original_state_prefixes": [],
+      "download_url": "https://github.com/eliaukyh17-droid/SAFIR/releases/download/weights-v0.1.0/a223_components.safetensors",
+      "retained_tensor_dtype_shape_and_bytes_match_original": true
     }
   ],
-  "repository": "https://github.com/eliaukyh17-droid/SAFIR"
+  "verification": {
+    "included_tensors": 807,
+    "excluded_pretrained_backbone_tensors": 719,
+    "included_raw_tensor_bytes": 191013961,
+    "verification_scope": "every retained tensor dtype, shape and raw bytes compared to original checkpoint",
+    "model_inference_performed": false,
+    "training_performed": false
+  }
 }

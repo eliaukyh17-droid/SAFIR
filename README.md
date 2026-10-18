@@ -6,9 +6,9 @@ This repository accompanies the SAFIR manuscript. SAFIR combines our TIFDFusion 
 
 ## Initial release
 
-This first stage provides archived training and inference entry scripts, documentation, and the expected hashes of the paper's checkpoint chain. **Checkpoint files are pending; no download assets are published yet. Model implementation source is withheld at this stage.**
+This stage provides archived training and inference entry scripts, documentation, and [seven component-weight files](https://github.com/eliaukyh17-droid/SAFIR/releases/tag/weights-v0.1.0). **Model implementation source is withheld at this stage.** The component weights exclude the embedded pretrained SegFormer and YOLO backbone tensors, which remain separate upstream dependencies.
 
-The entry scripts require model definitions, auxiliary loaders, configurations, and protocol records that are outside this release. They are provided for source inspection and cannot independently train a model or generate fused images. The checksum utility runs independently using Python 3.9 or newer. End-to-end reproduction is not currently supported.
+The entry scripts require model definitions, auxiliary loaders, configurations, and protocol records that are outside this release. They are provided for source inspection and cannot independently train a model or generate fused images. The published safetensors format also differs from the checkpoints accepted by the archived runners. The checksum utility runs independently using Python 3.9 or newer; an additional reader can inspect component tensor groups. End-to-end reproduction is not currently supported.
 
 The manuscript uses the frozen **SAFIR-A32-Controlled** evaluation candidate and its final A2.23 expert predictor. Archived experiment identifiers are retained for provenance. SAFIR expands to *Smoke-Activated Fusion with Identity-Preserving Residuals*.
 
@@ -17,8 +17,10 @@ The manuscript uses the frozen **SAFIR-A32-Controlled** evaluation candidate and
 | Path | Contents |
 | --- | --- |
 | `reference_scripts/` | Original training and inference entry scripts |
-| `weights/manifest.json` | Expected identities of the seven archived component checkpoints; files pending |
+| `weights/manifest.json` | Published component-file hashes, original checkpoint hashes, tensor-group mapping, and download links |
+| `weights/tensor_index.json` | Dtypes, shapes, and raw-byte hashes of the 807 retained tensors |
 | `tools/verify_weights.py` | File-byte checksum verifier; no model imports or checkpoint deserialization |
+| `tools/read_component_weights.py` | Inspect published tensor groups without importing the architecture |
 | `docs/TRAINING_AND_TESTING.md` | Script map, stage dependencies, and reproduction limits |
 | `docs/DEPENDENCIES.md` | Third-party prior sources and release boundaries |
 
@@ -26,15 +28,15 @@ The ten source scripts retain their original bytes. Their relative paths, import
 
 ## Checkpoints
 
-The final A2.23 checkpoint contains a predictor state dictionary rather than the entire SAFIR network. The archived loader reconstructs the backbone and preceding components before loading this predictor; see [the checkpoint notes](weights/README.md).
+The final A2.23 checkpoint contains a predictor state dictionary rather than the entire SAFIR network. The seven published files cover the inherited component chain; they are not seven independent models. The archived loader reconstructs the backbone and preceding components before loading the final predictor; see [the checkpoint notes](weights/README.md) and [format documentation](docs/WEIGHT_FORMAT.md).
 
-Once the corresponding assets are provided, check their original file hashes with:
+Download the seven `.safetensors` assets from [GitHub Releases](https://github.com/eliaukyh17-droid/SAFIR/releases/tag/weights-v0.1.0) into `weights/`, then verify their published file hashes:
 
 ```sh
 python tools/verify_weights.py --root .
 ```
 
-At present the verifier reports seven missing files and exits with status 1. A matching hash would confirm archived file identity only; it would not validate tensor contents or execute the model.
+The verifier reports missing or mismatched files with a nonzero exit status. A matching file hash confirms identity with the exported asset. The export audit separately compared every retained tensor's dtype, shape, and raw bytes against the verified original checkpoints; this is not a forward-inference or training-reproduction test.
 
 ## Evaluation context
 

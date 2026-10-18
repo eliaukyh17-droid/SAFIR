@@ -34,4 +34,6 @@ The original loader verifies hashes of checkpoints and protocol evidence. Some c
 
 The model definitions, loader implementations that reconstruct the model, and architectural helpers are withheld. This release does not embed the model in a single-file script, wheel, bytecode, ONNX, or another executable representation.
 
+Published component files use the safetensors format described in [WEIGHT_FORMAT.md](WEIGHT_FORMAT.md). The archived runners require original `.pth` file hashes, report metadata, and a strict full-model state, including pretrained prior tensors. They cannot directly consume the new component assets. `tools/read_component_weights.py` only recovers the tensor groups for inspection; it is not a fusion model or a replacement training/inference runner.
+
 Full training/inference validation will require an explicitly chosen way of making the model executable, the correct component checkpoints, the relevant protocol assets, and a verified environment. No new model training, evaluation, or metric recomputation was performed to prepare this release.

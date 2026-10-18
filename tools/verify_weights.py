@@ -1,4 +1,4 @@
-"""Verify archive bytes; never import the model, deserialize weights, or download files."""
+"""Verify published component-file bytes without model imports or deserialization."""
 
 from __future__ import annotations
 
@@ -73,7 +73,7 @@ def main() -> int:
         print(f"Verification failed: {error}", file=sys.stderr)
         return 2
     report = {"all_match": all(item["status"] == "match" for item in results),
-              "scope": "raw archived file identity only; no model execution",
+              "scope": "published component-file identity only; no model execution",
               "checkpoints": results}
     print(json.dumps(report, indent=2))
     return 0 if report["all_match"] else 1

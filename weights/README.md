@@ -1,17 +1,29 @@
-# Checkpoint inventory
+# Component weights
 
-No model weight files are bundled in this initial release. `manifest.json` records the expected identities of the archived checkpoint chain; it does not provide download URLs or establish redistribution clearance.
+Download the seven `.safetensors` files from [weights-v0.1.0](https://github.com/eliaukyh17-droid/SAFIR/releases/tag/weights-v0.1.0), and place them in this directory. Large weight files are release attachments rather than Git-tracked files.
 
-The paper's existing inference loader reconstructs:
+`manifest.json` records each new file's SHA256, size, state-group mapping, parent checkpoint hash, and download URL. `SHA256SUMS` lists published component-file hashes. `tensor_index.json` records the dtype, shape, and raw-byte hash of every retained tensor.
+
+The archived loader's component chain is:
 
 **TIFDFusion Base → A211 → A213 → A215 → A217 → A219 → A223 → A32 wrapper**
 
-The intermediate checkpoints contain separately trained components. The final A223 checkpoint saves only its predictor; A32 is a parameter-free conditional wrapper. A single `final_epoch4.pth` is consequently not a complete SAFIR release.
+These seven files preserve the component states in that chain. They are not seven alternative models. The A223 original checkpoint stores only its final predictor; the parameter-free A32 wrapper has no separate trained weights.
 
-Names under `weights/` in the manifest are the planned asset filenames for the original, byte-identical archives. Expected hashes refer to those original files. If a checkpoint is stripped of optimizer metadata, merged, or separated from third-party tensors, it becomes a new artifact and needs a new hash and a verified comparison with the frozen paper model.
+The original seven `.pth` files were verified against the frozen paper hashes. For this release, their tensor groups were repackaged as safetensors, with 719 embedded pretrained SegFormer/YOLO backbone tensors excluded from Base. The 807 retained tensors, including trained alignment projections and all persistent buffers, were compared against the originals for identical dtype, shape, and raw bytes. All checks passed.
 
-Files must be matched by SHA256, not by a similar filename. In particular, the locally available historical backbone backup has not matched the canonical backbone hash and is not included as a substitute.
+The new files have different hashes and contain no original training/report metadata. The archived runners require the old hashes, metadata, and full model state, so they cannot directly use these files. Model definitions and the loading adapter are not provided in this initial release. These assets do not support standalone training or inference. See [the format notes](../docs/WEIGHT_FORMAT.md) and [third-party dependencies](../docs/DEPENDENCIES.md).
 
-Checkpoint verification uses file bytes only and never deserializes PyTorch/pickle content. A matching checksum confirms identity against this inventory; it does not independently prove model behavior or absence of embedded third-party components.
+Verify downloaded component files from the repository root:
 
-For distribution, large approved weights can be attached to GitHub Releases while scripts and documentation remain in Git. GitHub blocks files above 100 MiB in ordinary repository storage; see [GitHub's large-file guidance](https://docs.github.com/en/repositories/working-with-files/managing-large-files/about-large-files-on-github). Release assets should be published only after the matching checkpoint files and release terms are confirmed.
+```sh
+python tools/verify_weights.py --root .
+```
+
+Inspect a component's tensor groups after installing compatible PyTorch and safetensors packages:
+
+```sh
+python tools/read_component_weights.py --component a213
+```
+
+The reader does not instantiate a model or generate a fused image. The tensor-level export checks do not establish forward-output equivalence or historical training reproducibility.
