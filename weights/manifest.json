@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "status": "initial_reference_source_release_checkpoint_assets_pending",
+  "paper_candidate": "SAFIR-A32-Controlled",
+  "hash_scope": "original archived file bytes; not future sanitized or consolidated exports",
+  "model_implementation_included": false,
+  "checkpoints": [
+    {
+      "id": "canonical_tifdfusion",
+      "file": "weights/canonical_tifdfusion.pth",
+      "role": "Frozen canonical TIFDFusion baseline; normal route and source for all smoke stages",
+      "sha256": "b502e5db0a10bc9bf3a6d28fd12949b49fc2d01d8cb47ebe3ca7210ca8b389d2",
+      "download_url": null,
+      "asset_status": "pending_retrieval_and_release_review"
+    },
+    {
+      "id": "a211",
+      "file": "weights/a211.pth",
+      "role": "Frozen initial joint-source router and smoke expert",
+      "sha256": "2b5f997e14a6b5ee03853dbfb765eaa0632906fcde72054eff9cae9cdcb098a3",
+      "download_url": null,
+      "asset_status": "pending_retrieval_and_release_review"
+    },
+    {
+      "id": "a213",
+      "file": "weights/a213.pth",
+      "role": "Frozen standardized router score head and fitted normalizer",
+      "sha256": "48a325067d9425bb9133f843aa8ba6a41f13199c469c30abdcc69e1c863b66b1",
+      "download_url": null,
+      "asset_status": "pending_retrieval_and_release_review"
+    },
+    {
+      "id": "a215",
+      "file": "weights/a215.pth",
+      "role": "Frozen low/high frequency residual refiner",
+      "sha256": "48278cf7c7ea1fecc6c5a36a0462b3ac53f950f7be854e07c0463cd7983e7893",
+      "download_url": null,
+      "asset_status": "pending_retrieval_and_release_review"
+    },
+    {
+      "id": "a217",
+      "file": "weights/a217.pth",
+      "role": "Frozen mask-supervised support predictor",
+      "sha256": "57e5a420a55d06db1d5c2565dff01ce7c11ca4fcf8f11122577a087fcce36311",
+      "download_url": null,
+      "asset_status": "pending_retrieval_and_release_review"
+    },
+    {
+      "id": "a219",
+      "file": "weights/a219.pth",
+      "role": "Frozen dual-support benefit rescue controller",
+      "sha256": "8e74e40c6f08dbb3317a8fed7ce7ff7d8051379368a7c503ec9a2f0ceff71046",
+      "download_url": null,
+      "asset_status": "pending_retrieval_and_release_review"
+    },
+    {
+      "id": "a223",
+      "file": "weights/a223.pth",
+      "role": "Final frozen dual semantic localization/utility predictor used by SAFIR-A32-Controlled",
+      "sha256": "3e41a0765c79bb28667e0c7c006aab6ad075fd5c2b4314a0266aa67542675902",
+      "download_url": null,
+      "asset_status": "pending_retrieval_and_release_review"
+    }
+  ],
+  "repository": "https://github.com/eliaukyh17-droid/SAFIR"
+}

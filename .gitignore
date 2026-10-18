@@ -1,0 +1,26 @@
+# Model implementation and private research workspace stay outside this repository.
+/models/
+/private_audit/
+/experiments/
+/datasets/
+/pretrained/
+/output/
+/results/
+.env
+.env.*
+*.pem
+*.key
+__pycache__/
+*.py[cod]
+.pytest_cache/
+# Weight artifacts are intended for an approved release attachment, not Git history.
+*.pth
+*.pt
+*.bin
+*.safetensors
+*.onnx
+*.pkl
+*.pickle
+*.whl
+*.zip
+*.tar.gz
