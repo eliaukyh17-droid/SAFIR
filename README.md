@@ -42,22 +42,6 @@ The condition is supplied by the caller. SAFIR does not infer it from the input 
 
 The routing diagram shows the identity-preserving normal path, the conditional smoke path, the learned support and utility maps, and the pointwise residual bound.
 
-```mermaid
-flowchart LR
-    I["Visible / infrared pair"] --> B["Frozen TIFDFusion backbone"]
-    B --> FB["Backbone output"]
-    I --> D["Smoke expert"]
-    FB --> D
-    D --> R["Bounded residual"]
-    FB --> N["Normal: exact backbone output"]
-    R --> S["Smoke: clipped residual correction"]
-    C{"External condition c"}
-    N --> O["Output F"]
-    S --> O
-    C -->|normal| N
-    C -->|smoke| S
-```
-
 ### Frequency-specific task interaction in TIFDFusion
 
 <p align="center">
