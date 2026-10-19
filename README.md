@@ -44,15 +44,15 @@ The routing diagram shows the identity-preserving normal path, the conditional s
 
 ```mermaid
 flowchart LR
-    I[Visible–infrared pair] --> B[Frozen TIFDFusion backbone]
-    B --> Fb[Backbone output F_b]
-    I --> D[Smoke expert]
-    Fb --> D
-    D --> R[Bounded residual D]
-    Fb --> N[Normal: exact F_b]
-    R --> S[Smoke: clip(F_b + D)]
-    C{External condition c}
-    N --> O[Output F]
+    I["Visible / infrared pair"] --> B["Frozen TIFDFusion backbone"]
+    B --> FB["Backbone output"]
+    I --> D["Smoke expert"]
+    FB --> D
+    D --> R["Bounded residual"]
+    FB --> N["Normal: exact backbone output"]
+    R --> S["Smoke: clipped residual correction"]
+    C{"External condition c"}
+    N --> O["Output F"]
     S --> O
     C -->|normal| N
     C -->|smoke| S
