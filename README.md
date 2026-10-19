@@ -42,6 +42,14 @@ The condition is supplied by the caller. SAFIR does not infer it from the input 
 
 The routing diagram shows the identity-preserving normal path, the conditional smoke path, the learned support and utility maps, and the pointwise residual bound.
 
+### TIFDFusion backbone architecture
+
+<p align="center">
+  <img src="docs/assets/tifdfusion-overall-architecture.png" alt="TIFDFusion overall architecture" width="100%">
+</p>
+
+The backbone uses independent visible and infrared encoders, four scale-specific TIFM blocks, frozen semantic and detection priors, and a coarse-to-fine fusion decoder.
+
 ### Frequency-specific task interaction in TIFDFusion
 
 <p align="center">
@@ -49,6 +57,23 @@ The routing diagram shows the identity-preserving normal path, the conditional s
 </p>
 
 The TIFM detail view separates Haar low-frequency structure from high-frequency detail. Semantic evidence guides the low-frequency branch, while detection evidence corrects the high-frequency residual before inverse reconstruction.
+
+## Output visualizations
+
+The following qualitative panels are taken from the paper's fixed smoke comparisons. They illustrate the fused outputs and the learned correction response; they are visual examples rather than a replacement for the reported quantitative evaluation.
+
+<table>
+  <tr>
+    <td align="center" width="50%">
+      <img src="docs/assets/safir-output-comparison.png" alt="SAFIR output comparison under medium and heavy smoke" width="100%"><br>
+      <sub>Medium/heavy smoke comparison across source images, external methods, TIFDFusion, and SAFIR.</sub>
+    </td>
+    <td align="center" width="50%">
+      <img src="docs/assets/safir-mechanism-response.png" alt="SAFIR mechanism response maps and fused outputs" width="100%"><br>
+      <sub>Smoke-visible input, inherited fusion, localization support, utility multiplier, applied correction, and SAFIR output.</sub>
+    </td>
+  </tr>
+</table>
 
 ## Quick start
 
