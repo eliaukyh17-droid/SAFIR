@@ -1,39 +1,35 @@
-# Training and testing script map
+# Archived training and testing entries
 
-The scripts below are archived source references, not standalone commands. They retain their original names to avoid confusing the backbone, the final smoke expert, and the evaluation wrapper.
+The ten scripts below are unchanged source references. Their original filenames identify the historical research stages; they are not runnable training or testing commands for this partial release.
 
 ## Backbone
 
-`reference_scripts/train.py` and `reference_scripts/test.py` are the TIFDFusion backbone entries. `test.py` is not the full SAFIR inference entry and cannot interpret an A2.23 predictor checkpoint as a backbone checkpoint.
+`reference_scripts/train.py` and `reference_scripts/test.py` are the TIFDFusion backbone entries. `test.py` is not the full SAFIR inference entry.
 
-The local training source alone does not establish the exact historical objectives, configuration, and software environment that produced the paper's frozen backbone. Those records still need reconciliation. It must not be presented as a verified from-scratch reproduction of the paper checkpoint.
+The available training source alone does not establish the exact historical objectives, configuration, and software environment that produced the frozen paper backbone. These records still require reconciliation; this is not a verified from-scratch reproduction recipe.
 
-## Smoke stages
+## Smoke-expert training references
 
-| Archived entry | Role in the inherited model chain |
+| Entry under `reference_scripts/` | Historical role |
 | --- | --- |
-| `train_a211_scjsfe_probe.py` | Earlier source-aware smoke expert |
-| `train_a213_multiscale_standardized_router.py` | Standardization and score-head stage |
+| `train_a211_scjsfe_probe.py` | Source-aware smoke proposal expert |
+| `train_a213_multiscale_standardized_router.py` | Standardization and automatic-routing score head |
 | `train_a215_source_preserving_refiner.py` | Source-preserving residual refiner |
 | `train_a217_mask_supervised_support.py` | Localization/support predictor |
-| `train_a219_dual_support_benefit_rescue.py` | Inherited controller stage |
-| `train_a223_dual_semantic_utility.py` | Final predictor training with gain-weighted utility supervision |
+| `train_a219_dual_support_benefit_rescue.py` | Automatic-routing controller stage |
+| `train_a223_dual_semantic_utility.py` | Final localization/utility predictor training |
 
-These entries reside in `reference_scripts/`. This table records inheritance in the archived loader, not six independent training commands and not six separate claims of novelty. Earlier phases also depend on configurations, reports, helpers, and intermediate artifacts that are absent from this initial release.
+This table describes archived training history, not separate models to download or a claim that every historical head affects the final image. In particular, the A213 score head and A219 controller do not determine the output image under the final explicit `normal`/`smoke` selection; their registered state is retained in the consolidated snapshot.
 
-The final training entry saves a predictor state dictionary. The frozen backbone and preceding components must already exist. The A32 conditional wrapper introduces no additional learned parameters and has no independent trained checkpoint.
+The original A223 training checkpoint stores only its predictor state. The final model also contains frozen inherited components. A32 introduces the explicit condition selection and no additional learned weights.
 
-## Inference entries
+## Inference references
 
 | Entry under `reference_scripts/tools/` | Scope |
 | --- | --- |
-| `infer_a33_controlled.py` | Frozen MSRS/FMB/M3FD inference, explicit `normal`/`smoke` condition |
+| `infer_a33_controlled.py` | Frozen MSRS/FMB/M3FD inference with explicit `normal`/`smoke` condition |
 | `infer_a38_controlled.py` | Frozen TNO/RoadScene extension |
 
-The original loader verifies hashes of checkpoints and protocol evidence. Some checks also bind configuration or source files. Merely providing a final weight file and deleting the model directory does not satisfy these dependencies. The supplied entries are therefore reference source, and are not accompanied by a misleading runnable installation command.
+These runners depend on withheld model definitions, auxiliary loaders, configurations, and protocol evidence. Their original checks bind checkpoint hashes and metadata, and sometimes configuration/source files. They cannot directly load the consolidated `SAFIR_final.safetensors` asset.
 
-The model definitions, loader implementations that reconstruct the model, and architectural helpers are withheld. This release does not embed the model in a single-file script, wheel, bytecode, ONNX, or another executable representation.
-
-Published component files use the safetensors format described in [WEIGHT_FORMAT.md](WEIGHT_FORMAT.md). The archived runners require original `.pth` file hashes, report metadata, and a strict full-model state, including pretrained prior tensors. They cannot directly consume the new component assets. `tools/read_component_weights.py` only recovers the tensor groups for inspection; it is not a fusion model or a replacement training/inference runner.
-
-Full training/inference validation will require an explicitly chosen way of making the model executable, the correct component checkpoints, the relevant protocol assets, and a verified environment. No new model training, evaluation, or metric recomputation was performed to prepare this release.
+The public [state reader](../tools/read_component_weights.py) can inspect the final checkpoint but cannot run fusion. No model implementation is embedded in another executable format. See [WEIGHT_FORMAT.md](WEIGHT_FORMAT.md) for the loading boundary. No new model training, inference validation, or metric recomputation was performed to prepare this release.

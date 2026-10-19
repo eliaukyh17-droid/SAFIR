@@ -1,29 +1,28 @@
-# Component weights
+# Final SAFIR checkpoint
 
-Download the seven `.safetensors` files from [weights-v0.1.0](https://github.com/eliaukyh17-droid/SAFIR/releases/tag/weights-v0.1.0), and place them in this directory. Large weight files are release attachments rather than Git-tracked files.
+Download **[SAFIR_final.safetensors](https://github.com/eliaukyh17-droid/SAFIR/releases/download/weights-v0.2.0/SAFIR_final.safetensors)** into this directory. The [weights-v0.2.0 release](https://github.com/eliaukyh17-droid/SAFIR/releases/tag/weights-v0.2.0) contains four assets:
 
-`manifest.json` records each new file's SHA256, size, state-group mapping, parent checkpoint hash, and download URL. `SHA256SUMS` lists published component-file hashes. `tensor_index.json` records the dtype, shape, and raw-byte hash of every retained tensor.
+- `SAFIR_final.safetensors`: one consolidated checkpoint for the final frozen A32 model.
+- `manifest.json`: format, size, file hash, and download information.
+- `tensor_index.json`: exported tensor keys, dtypes, shapes, and raw-byte hashes.
+- `SHA256SUMS`: the checkpoint file checksum.
 
-The archived loader's component chain is:
+The binary checkpoint is a release attachment, not a Git-tracked file. Use the metadata from the same release.
 
-**TIFDFusion Base → A211 → A213 → A215 → A217 → A219 → A223 → A32 wrapper**
+The checkpoint retains 807 project-component state tensors, including frozen inherited components, auxiliary heads, and persistent buffers. Some retained state supports historical automatic-routing or diagnostic behavior and does not affect the final explicit `normal`/`smoke` image. This is a complete retained snapshot, not a pruned inference minimum. The A32 wrapper adds no learned weights. The original A223 training checkpoint stored only its predictor and was not a complete SAFIR checkpoint.
 
-These seven files preserve the component states in that chain. They are not seven alternative models. The A223 original checkpoint stores only its final predictor; the parameter-free A32 wrapper has no separate trained weights.
+The 719 embedded pretrained prior-backbone tensors are excluded. Model definitions and the matching third-party priors remain external requirements; this file cannot independently run fusion. See [format and loading notes](../docs/WEIGHT_FORMAT.md) and [dependencies](../docs/DEPENDENCIES.md).
 
-The original seven `.pth` files were verified against the frozen paper hashes. For this release, their tensor groups were repackaged as safetensors, with 719 embedded pretrained SegFormer/YOLO backbone tensors excluded from Base. The 807 retained tensors, including trained alignment projections and all persistent buffers, were compared against the originals for identical dtype, shape, and raw bytes. All checks passed.
-
-The new files have different hashes and contain no original training/report metadata. The archived runners require the old hashes, metadata, and full model state, so they cannot directly use these files. Model definitions and the loading adapter are not provided in this initial release. These assets do not support standalone training or inference. See [the format notes](../docs/WEIGHT_FORMAT.md) and [third-party dependencies](../docs/DEPENDENCIES.md).
-
-Verify downloaded component files from the repository root:
+From the repository root, verify the downloaded file:
 
 ```sh
 python tools/verify_weights.py --root .
 ```
 
-Inspect a component's tensor groups after installing compatible PyTorch and safetensors packages:
+To inspect the retained state after installing compatible PyTorch and safetensors packages:
 
 ```sh
-python tools/read_component_weights.py --component a213
+python tools/read_component_weights.py --component safir_final
 ```
 
-The reader does not instantiate a model or generate a fused image. The tensor-level export checks do not establish forward-output equivalence or historical training reproducibility.
+The reader does not instantiate SAFIR or generate images. Checks cover file integrity and preservation of retained tensor dtypes, shapes, and raw bytes. No inference-equivalence or training-reproduction test was performed for this export.

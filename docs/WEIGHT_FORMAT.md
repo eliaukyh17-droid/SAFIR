@@ -1,32 +1,36 @@
-# Component tensor format
+# Final checkpoint format
 
-The release uses `safir_component_tensors_v1` in seven safetensors files. Each key is the original checkpoint state-group name, a dot, and the original tensor key. For example, `standardizer_state_dict.fitted` maps to `checkpoint["standardizer_state_dict"]["fitted"]`. `state_groups` in the manifest provides the exact reversible mapping.
+`SAFIR_final.safetensors` uses format version `safir_final_state_v1` and manifest component ID `safir_final`. It consolidates the retained state under the native registered keys of the final A32 model. Every exported key is:
 
-| Component | Original tensor groups retained |
-| --- | --- |
-| `canonical_tifdfusion` | `model_state_dict`, with the two pretrained backbone prefixes excluded |
-| `a211` | `router_state_dict`, `expert_state_dict` |
-| `a213` | `score_head_state_dict`, `standardizer_state_dict` |
-| `a215` | `refiner_state_dict` |
-| `a217` | `predictor_state_dict` |
-| `a219` | `controller_state_dict` |
-| `a223` | `predictor_state_dict` |
+```text
+state_dict.<native A32 registered state key>
+```
 
-The only omitted model-state prefixes are:
+The manifest declares one state group:
+
+```json
+{"original_checkpoint_group": "state_dict", "exported_key_prefix": "state_dict."}
+```
+
+The reader removes only the leading `state_dict.` to recover the native state dictionary. `tensor_index.json` records the exact exported keys. The group name describes this consolidated state, not a training-stage checkpoint format.
+
+## Retained state
+
+All 807 retained project-component tensors are included: frozen inherited components, auxiliary heads, trained alignment projections, and persistent buffers, including BatchNorm statistics/counters and standardization state. This preserves every retained tensor's dtype, shape, and raw data bytes without quantization or casting. It is a complete retained snapshot, not a pruned or minimum set for inference. Historical automatic-routing and diagnostic state remains present even where it does not affect explicit-mode final images.
+
+The exclusions are the 719 pretrained backbone tensors in these two subtrees of the frozen canonical model, nested beneath its native A32 state path:
 
 ```text
 prior_extractor.seg_extractor.backbone.
 prior_extractor.det_extractor.backbone.
 ```
 
-The trained `align_projs` layers are retained. Persistent buffers are retained, including BatchNorm statistics/counters and A213's `mean`, `scale`, and boolean `fitted` state. Tensor values are not quantized or cast.
-
-The export keeps each tensor's original dtype, shape, and raw data bytes. Contiguous storage is used in the new container; original Python objects, optimizer/report metadata, storage alias relationships, and checkpoint file bytes are not preserved. `original_checkpoint_sha256` identifies the original checkpoint file, while `sha256` identifies the published component file. These fields are not interchangeable.
+The container uses contiguous tensor storage. It does not preserve original checkpoint file bytes, Python objects, optimizer/report metadata, or storage alias relationships. The published SHA256 identifies the new consolidated file.
 
 ## Loading boundary
 
-`tools/read_component_weights.py` verifies a published file and reconstructs dictionaries of tensor groups. It contains no model definitions. Instantiating SAFIR, recovering its prior dependencies, and running fusion require implementation and protocol assets outside this release.
+`tools/read_component_weights.py --component safir_final` verifies the file and recovers its tensor state for inspection. The utility retains its existing filename and contains no model definitions.
 
-The original research loaders also check whole-file hashes and report fields before strict state loading. They are incompatible with the new safetensors assets. A future full loader would need to obtain the exact matching priors, restore the complete key set, and check all reconstructed states. Broad `strict=False`, random prior initialization, or zero-prior fallback would not establish equivalence to the frozen paper model.
+The archived research runners expect original checkpoint hashes, metadata, and a different loading sequence. They cannot directly consume this asset. Running SAFIR would require the withheld model implementation, a compatible loader, the exact matching external priors, and the relevant configuration/protocol assets. Restoring a runnable model requires checking the complete reconstructed key set; permissive loading or substitute prior values would not establish equivalence to the frozen paper model.
 
-The verification covers all 807 retained tensors and the exact 719-tensor exclusion boundary. No model inference, training, or benchmark recomputation was performed during this export. Separate upstream prior acquisition and this file split do not replace the upstream license terms.
+Validation of this export covers file integrity and retained tensor preservation. No model inference, training, or benchmark recomputation was performed, and no output-equivalence claim is made.

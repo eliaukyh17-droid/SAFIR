@@ -1,4 +1,4 @@
-"""Inspect verified component tensor groups; this does not construct the fusion model."""
+"""Inspect verified weight tensors; this does not construct the fusion model."""
 from __future__ import annotations
 
 import argparse
@@ -9,8 +9,8 @@ from pathlib import Path
 
 def load_groups(component: str, weights_dir: Path) -> dict:
     manifest = json.loads((weights_dir / "manifest.json").read_text(encoding="utf-8"))
-    if manifest.get("format_version") != "safir_component_tensors_v1":
-        raise ValueError("unsupported component format")
+    if manifest.get("format_version") not in {"safir_component_tensors_v1", "safir_final_state_v1"}:
+        raise ValueError("unsupported weight format")
     rows = [r for r in manifest["checkpoints"] if r["id"] == component]
     if len(rows) != 1:
         raise ValueError("unknown or duplicated component ID")
