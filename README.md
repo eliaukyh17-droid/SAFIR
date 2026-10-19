@@ -1,47 +1,143 @@
+<div align="center">
+
 # SAFIR
 
-**Task-Interactive Infrared–Visible Fusion With Frequency Division and Conditional Smoke Correction**
+### Task-Interactive Infrared–Visible Fusion With Frequency Division and Conditional Smoke Correction
 
-This repository accompanies the SAFIR manuscript. SAFIR combines our TIFDFusion backbone with a conditional smoke-correction expert. Semantic and detection features guide separate wavelet branches. An externally supplied `normal` or `smoke` condition selects the backbone output or bounded residual correction; the system does not estimate this condition from the images.
+<a href="https://github.com/eliaukyh17-droid/SAFIR/releases/tag/weights-v0.2.0"><img src="https://img.shields.io/badge/release-weights--v0.2.0-1f8acb.svg" alt="weights release"></a>
+<a href="https://github.com/eliaukyh17-droid/SAFIR/releases/download/weights-v0.2.0/SAFIR_final.safetensors"><img src="https://img.shields.io/badge/checkpoint-SAFIR__final.safetensors-2e8b57.svg" alt="final checkpoint"></a>
+<a href="https://github.com/eliaukyh17-droid/SAFIR/blob/main/docs/WEIGHT_FORMAT.md"><img src="https://img.shields.io/badge/format-safetensors-f39c12.svg" alt="safetensors format"></a>
+<a href="https://github.com/eliaukyh17-droid/SAFIR/blob/main/docs/DEPENDENCIES.md"><img src="https://img.shields.io/badge/model%20source-withheld-6c757d.svg" alt="model source withheld"></a>
 
-## Release scope
+**TIFDFusion backbone · task-guided frequency division · bounded conditional smoke correction**
 
-The release provides **one consolidated final-model checkpoint**, [SAFIR_final.safetensors](https://github.com/eliaukyh17-droid/SAFIR/releases/download/weights-v0.2.0/SAFIR_final.safetensors), for the frozen **SAFIR-A32-Controlled** candidate, together with archived training and inference entry scripts. **Model implementation source is withheld at this stage.**
+<p>
+  <a href="#overview">Overview</a> ·
+  <a href="#visual-overview">Visual overview</a> ·
+  <a href="#quick-start">Quick start</a> ·
+  <a href="#release-boundary">Release boundary</a> ·
+  <a href="#repository-map">Repository map</a>
+</p>
 
-The checkpoint preserves all 807 retained project-component state tensors, including frozen inherited components, auxiliary heads, and buffers. It is a complete retained snapshot, not a pruned or minimum inference state. The 719 embedded pretrained SegFormer/YOLO backbone tensors are excluded and remain external dependencies. The asset is not a standalone runnable model.
+</div>
 
-The ten archived source scripts retain their original bytes. Their imports, paths, and defaults refer to the research workspace and require model definitions, loaders, configurations, and protocol records outside this release. They cannot independently train SAFIR or generate fused images, and cannot directly load the new checkpoint format. End-to-end reproduction is not currently supported.
+> **Reproducibility status.** This repository is a public weight, protocol, and audit release. It supports checkpoint verification and tensor inspection. The executable model implementation and a standalone inference runtime are not included yet.
 
-## Download and verify
+## Overview
 
-Download `SAFIR_final.safetensors` from [weights-v0.2.0](https://github.com/eliaukyh17-droid/SAFIR/releases/tag/weights-v0.2.0) into `weights/`, then run from the repository root:
+SAFIR combines the original **TIFDFusion** backbone with a conditional smoke-correction expert. TIFDFusion exchanges semantic and detection evidence with the visible–infrared fusion features at multiple scales and separates low-frequency structure from high-frequency detail. SAFIR then accepts an externally supplied condition:
 
-```sh
+- `normal` returns the frozen backbone output exactly;
+- `smoke` applies a bounded residual correction and clips the result to `[0, 1]`.
+
+The condition is supplied by the caller. SAFIR does not infer it from the input images in the released A32 controlled candidate.
+
+## Visual overview
+
+### SAFIR routing and smoke-expert interface
+
+<p align="center">
+  <img src="docs/assets/safir-routing-architecture.png" alt="SAFIR computation and condition interface" width="100%">
+</p>
+
+The routing diagram shows the identity-preserving normal path, the conditional smoke path, the learned support and utility maps, and the pointwise residual bound.
+
+```mermaid
+flowchart LR
+    I[Visible–infrared pair] --> B[Frozen TIFDFusion backbone]
+    B --> Fb[Backbone output F_b]
+    I --> D[Smoke expert]
+    Fb --> D
+    D --> R[Bounded residual D]
+    Fb --> N[Normal: exact F_b]
+    R --> S[Smoke: clip(F_b + D)]
+    C{External condition c}
+    N --> O[Output F]
+    S --> O
+    C -->|normal| N
+    C -->|smoke| S
+```
+
+### Frequency-specific task interaction in TIFDFusion
+
+<p align="center">
+  <img src="docs/assets/tifm-frequency-division.png" alt="TIFM frequency-specific task interaction and reconstruction" width="100%">
+</p>
+
+The TIFM detail view separates Haar low-frequency structure from high-frequency detail. Semantic evidence guides the low-frequency branch, while detection evidence corrects the high-frequency residual before inverse reconstruction.
+
+## Quick start
+
+### Download the final checkpoint
+
+Download **[`SAFIR_final.safetensors`](https://github.com/eliaukyh17-droid/SAFIR/releases/download/weights-v0.2.0/SAFIR_final.safetensors)** from the [weights-v0.2.0 release](https://github.com/eliaukyh17-droid/SAFIR/releases/tag/weights-v0.2.0). The release also contains `manifest.json`, `tensor_index.json`, and `SHA256SUMS`.
+
+### Verify the file
+
+From the repository root:
+
+```bash
 python tools/verify_weights.py --root .
 ```
 
-The verifier requires Python 3.9 or newer and reports missing or mismatched files with a nonzero exit status. Verification covers file integrity and retained tensor preservation; no forward-inference, training-reproduction, or benchmark test was performed for this export. See [checkpoint notes](weights/README.md) for the inspection command and release assets.
+The verifier checks the release file bytes against the published SHA256. It does not import the model or run inference.
 
-## Files
+### Inspect the retained tensor state
 
-| Path | Contents |
+After installing compatible PyTorch and `safetensors` packages:
+
+```bash
+python tools/read_component_weights.py --component safir_final
+```
+
+This command reports the consolidated state group without importing any architecture code.
+
+## What the checkpoint contains
+
+`SAFIR_final.safetensors` is one consolidated snapshot of the final **SAFIR-A32-Controlled** candidate:
+
+- 807 retained project-component tensors, including inherited frozen modules, auxiliary heads, alignment projections, and buffers;
+- native final-model state keys under the `state_dict.` prefix;
+- exact dtype, shape, and raw tensor-byte preservation relative to the verified source checkpoints;
+- 719 excluded third-party SegFormer/YOLO backbone tensors, which remain external dependencies.
+
+The file is a complete retained state snapshot. It is not a pruned minimum inference checkpoint and it does not contain the model implementation, optimizer metadata, dataset assets, or third-party prior checkpoints.
+
+## Release boundary
+
+The repository intentionally separates public research records from the private model implementation.
+
+| Available here | Not included in this release |
 | --- | --- |
-| `reference_scripts/` | Ten unchanged archived training and inference entries |
-| `weights/manifest.json` | Final checkpoint format, file hash, size, and download link |
-| `weights/tensor_index.json` | Exported keys, dtypes, shapes, and raw-byte hashes |
-| `weights/SHA256SUMS` | Final checkpoint file checksum |
-| `tools/verify_weights.py` | Independent file checksum verifier |
-| `tools/read_component_weights.py` | Tensor-state reader; no architecture imports |
-| `docs/WEIGHT_FORMAT.md` | Native state-key format and loading boundary |
-| `docs/TRAINING_AND_TESTING.md` | Archived script map and reproduction limits |
-| `docs/DEPENDENCIES.md` | External prior dependencies and release boundaries |
+| Final consolidated weight file | Model architecture source |
+| Weight manifest, tensor index, and checksums | A loader for the consolidated file |
+| Archived training and inference entry scripts | Standalone executable inference runtime |
+| Method and protocol documentation | Dataset images, annotations, and downstream evaluator checkpoints |
+| External dependency and licensing notes | Matching SegFormer/YOLO prior checkpoints |
+
+The archived scripts preserve their original bytes and document the historical research workflow. Their imports, paths, and checkpoint checks refer to the private research workspace; they are not a ready-to-run inference package for a fresh clone. The current release therefore does not claim end-to-end local reproduction of the paper metrics.
 
 ## Evaluation context
 
-The manuscript evaluates registered visible–infrared pairs from MSRS, FMB, and M3FD under clean and synthetic medium/heavy smoke, with TNO and RoadScene as an extension. Clean inputs use `normal`; smoke inputs use `smoke`. Infrared inputs remain unchanged during smoke synthesis. Dataset assets, downstream evaluator checkpoints, and comparison-method outputs are outside this repository. The archived entries alone do not reproduce the reported measurements.
+The manuscript evaluates visible–infrared pairs from MSRS, FMB, and M3FD under clean and synthetic medium/heavy smoke, with TNO and RoadScene as an extension. Clean inputs use `normal`; smoke inputs use `smoke`; infrared inputs remain unchanged during smoke synthesis. Dataset assets, downstream evaluator checkpoints, and comparison-method outputs are outside this repository.
 
-SAFIR expands to *Smoke-Activated Fusion with Identity-Preserving Residuals*.
+## Repository map
 
-## Release terms and manuscript information
+| Path | Purpose |
+| --- | --- |
+| `docs/assets/` | Public architecture figures used in this README |
+| `weights/` | Final checkpoint notes and machine-readable tensor metadata |
+| `tools/verify_weights.py` | File-level checksum verification |
+| `tools/read_component_weights.py` | Architecture-free tensor inspection |
+| `reference_scripts/` | Byte-preserved historical training and inference entry points |
+| `docs/WEIGHT_FORMAT.md` | Consolidated state format and loading boundary |
+| `docs/TRAINING_AND_TESTING.md` | Historical stage map and reproduction limits |
+| `docs/DEPENDENCIES.md` | Third-party prior dependencies and release terms |
 
-Code and weight release terms have not yet been selected; no repository-wide reuse license is assigned. Third-party components retain their own terms. The author list, manuscript link, and citation metadata will be added after confirmation.
+## Archived training stages
+
+The A211, A213, A215, A217, A219, and A223 names identify historical training stages in the inherited chain; they are not six independent models that users need to download. The public release presents the final retained state as one checkpoint. The original stage provenance remains documented in the private audit records.
+
+## Release terms
+
+No repository-wide reuse license has been assigned at this stage. Third-party components retain their own terms. Please cite the accompanying manuscript when using the released records or weights.
