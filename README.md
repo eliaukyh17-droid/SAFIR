@@ -7,7 +7,6 @@
 <a href="https://github.com/eliaukyh17-droid/SAFIR/releases/tag/weights-v0.2.0"><img src="https://img.shields.io/badge/release-weights--v0.2.0-1f8acb.svg" alt="weights release"></a>
 <a href="https://github.com/eliaukyh17-droid/SAFIR/releases/download/weights-v0.2.0/SAFIR_final.safetensors"><img src="https://img.shields.io/badge/checkpoint-SAFIR__final.safetensors-2e8b57.svg" alt="final checkpoint"></a>
 <a href="https://github.com/eliaukyh17-droid/SAFIR/blob/main/docs/WEIGHT_FORMAT.md"><img src="https://img.shields.io/badge/format-safetensors-f39c12.svg" alt="safetensors format"></a>
-<a href="https://github.com/eliaukyh17-droid/SAFIR/blob/main/docs/DEPENDENCIES.md"><img src="https://img.shields.io/badge/model%20source-withheld-6c757d.svg" alt="model source withheld"></a>
 
 **TIFDFusion backbone · task-guided frequency division · bounded conditional smoke correction**
 
@@ -15,13 +14,13 @@
   <a href="#overview">Overview</a> ·
   <a href="#visual-overview">Visual overview</a> ·
   <a href="#quick-start">Quick start</a> ·
-  <a href="#release-boundary">Release boundary</a> ·
+  <a href="#project-updates">Project updates</a> ·
   <a href="#repository-map">Repository map</a>
 </p>
 
 </div>
 
-> **Reproducibility status.** This repository is a public weight, protocol, and audit release. It supports checkpoint verification and tensor inspection. The executable model implementation and a standalone inference runtime are not included yet.
+This repository provides SAFIR weights, reference training and inference scripts, method documentation, and paper visualizations.
 
 ## Overview
 
@@ -60,7 +59,7 @@ The TIFM detail view separates Haar low-frequency structure from high-frequency 
 
 ## Output visualizations
 
-The following qualitative panels are taken from the paper's fixed smoke comparisons. They illustrate the fused outputs and the learned correction response; they are visual examples rather than a replacement for the reported quantitative evaluation.
+The following qualitative panels are taken from the paper's fixed smoke comparisons. They illustrate the fused outputs and the learned correction response.
 
 <table>
   <tr>
@@ -89,7 +88,7 @@ From the repository root:
 python tools/verify_weights.py --root .
 ```
 
-The verifier checks the release file bytes against the published SHA256. It does not import the model or run inference.
+The verifier checks the checkpoint against the published SHA256.
 
 ### Inspect the retained tensor state
 
@@ -99,7 +98,7 @@ After installing compatible PyTorch and `safetensors` packages:
 python tools/read_component_weights.py --component safir_final
 ```
 
-This command reports the consolidated state group without importing any architecture code.
+This command reports the consolidated tensor state.
 
 ## What the checkpoint contains
 
@@ -107,28 +106,17 @@ This command reports the consolidated state group without importing any architec
 
 - 807 retained project-component tensors, including inherited frozen modules, auxiliary heads, alignment projections, and buffers;
 - native final-model state keys under the `state_dict.` prefix;
-- exact dtype, shape, and raw tensor-byte preservation relative to the verified source checkpoints;
-- 719 excluded third-party SegFormer/YOLO backbone tensors, which remain external dependencies.
+- exact dtype, shape, and raw tensor-byte preservation relative to the verified source checkpoints.
 
-The file is a complete retained state snapshot. It is not a pruned minimum inference checkpoint and it does not contain the model implementation, optimizer metadata, dataset assets, or third-party prior checkpoints.
+See the [checkpoint format](docs/WEIGHT_FORMAT.md) for tensor metadata and the [dependency notes](docs/DEPENDENCIES.md) for SegFormer/YOLO prior requirements.
 
-## Release boundary
+## Project updates
 
-The repository intentionally separates public research records from the private model implementation.
-
-| Available here | Not included in this release |
-| --- | --- |
-| Final consolidated weight file | Model architecture source |
-| Weight manifest, tensor index, and checksums | A loader for the consolidated file |
-| Archived training and inference entry scripts | Standalone executable inference runtime |
-| Method and protocol documentation | Dataset images, annotations, and downstream evaluator checkpoints |
-| External dependency and licensing notes | Matching SegFormer/YOLO prior checkpoints |
-
-The archived scripts preserve their original bytes and document the historical research workflow. Their imports, paths, and checkpoint checks refer to the private research workspace; they are not a ready-to-run inference package for a fresh clone. The current release therefore does not claim end-to-end local reproduction of the paper metrics.
+We will continue updating this repository and upload additional project files and supporting materials in future releases.
 
 ## Evaluation context
 
-The manuscript evaluates visible–infrared pairs from MSRS, FMB, and M3FD under clean and synthetic medium/heavy smoke, with TNO and RoadScene as an extension. Clean inputs use `normal`; smoke inputs use `smoke`; infrared inputs remain unchanged during smoke synthesis. Dataset assets, downstream evaluator checkpoints, and comparison-method outputs are outside this repository.
+The manuscript evaluates visible–infrared pairs from MSRS, FMB, and M3FD under clean and synthetic medium/heavy smoke, with TNO and RoadScene as an extension. Clean inputs use `normal`; smoke inputs use `smoke`; infrared inputs remain unchanged during smoke synthesis.
 
 ## Repository map
 
@@ -137,15 +125,15 @@ The manuscript evaluates visible–infrared pairs from MSRS, FMB, and M3FD under
 | `docs/assets/` | Public architecture figures used in this README |
 | `weights/` | Final checkpoint notes and machine-readable tensor metadata |
 | `tools/verify_weights.py` | File-level checksum verification |
-| `tools/read_component_weights.py` | Architecture-free tensor inspection |
-| `reference_scripts/` | Byte-preserved historical training and inference entry points |
-| `docs/WEIGHT_FORMAT.md` | Consolidated state format and loading boundary |
-| `docs/TRAINING_AND_TESTING.md` | Historical stage map and reproduction limits |
+| `tools/read_component_weights.py` | Tensor state inspection |
+| `reference_scripts/` | Reference training and inference entry points |
+| `docs/WEIGHT_FORMAT.md` | Consolidated checkpoint format |
+| `docs/TRAINING_AND_TESTING.md` | Training stages and inference script documentation |
 | `docs/DEPENDENCIES.md` | Third-party prior dependencies and release terms |
 
 ## Archived training stages
 
-The A211, A213, A215, A217, A219, and A223 names identify historical training stages in the inherited chain; they are not six independent models that users need to download. The public release presents the final retained state as one checkpoint. The original stage provenance remains documented in the private audit records.
+The A211, A213, A215, A217, A219, and A223 names identify historical training stages. Their retained project-component weights are consolidated into the final checkpoint.
 
 ## Release terms
 
