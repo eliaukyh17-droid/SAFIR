@@ -102,6 +102,15 @@ Use `--condition smoke` for smoke-degraded visible inputs. For Linux CUDA infere
 
 Download **[SAFIR_final.safetensors](https://github.com/eliaukyh17-droid/SAFIR/releases/download/weights-v0.2.0/SAFIR_final.safetensors)** from the [weights release](https://github.com/eliaukyh17-droid/SAFIR/releases/tag/weights-v0.2.0), or use the downloader above. The single file contains the retained state of all fusion and smoke-adaptation stages. The loader restores the matching SegFormer and YOLO priors from their official checkpoints and checks the complete model state.
 
+The frozen fusion priors are available directly from their official hosts:
+
+| Prior | Official download | Local destination |
+| --- | --- | --- |
+| SegFormer-B2, Cityscapes | [Weights](https://huggingface.co/nvidia/segformer-b2-finetuned-cityscapes-1024-1024/resolve/d633b2072669ca68d8f8e309de9b52bfdbf6bf72/pytorch_model.bin), [configuration](https://huggingface.co/nvidia/segformer-b2-finetuned-cityscapes-1024-1024/resolve/d633b2072669ca68d8f8e309de9b52bfdbf6bf72/config.json) | `pretrained/segformer-b2/` |
+| YOLOv8s, COCO | [Weights](https://github.com/ultralytics/assets/releases/download/v8.1.0/yolov8s.pt) | `pretrained/yolov8s.pt` |
+
+`python -m tools.download_weights` downloads and verifies these files automatically. The FMB and M3FD task evaluators were trained separately for downstream scoring; their checkpoint identities are documented in the [evaluation guide](docs/EVALUATION.md#fixed-downstream-evaluators).
+
 The release was checked against the original stage checkpoints: all **1,526 model tensors** match, and the reconstructed models produced identical outputs on the CPU comparison input. Real-image inference, fusion metrics, and one optimizer step for each smoke-adaptation stage were also checked. See [validation details](docs/VALIDATION.md).
 
 ## Training and evaluation

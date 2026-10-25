@@ -53,6 +53,15 @@ Segmentation and detection use trained evaluation models that remain fixed acros
 | FMB DeepLabV3+, ResNet-50, 15 classes | `downstream_experiments/fmb_segmentation_final/tifdfusion/final.pth` | `pretrained/evaluators/fmb_final.pth` |
 | M3FD YOLOv8s, six classes | `downstream_experiments/m3fd_detection_final/training/tifdfusion/weights/last.pt` | `pretrained/evaluators/m3fd_last.pt` |
 
+Both files were produced by the project's reference task training and subsequently frozen for scoring all fusion methods. FMB training initializes the ResNet-50 encoder with ImageNet weights; M3FD training initializes YOLOv8s with COCO weights. The final evaluation protocol records these trained checkpoint identities:
+
+```text
+662fb68a5d58e1f49df303119a1ddf040a662c2ecd1cdd7155dda44111d224be  pretrained/evaluators/fmb_final.pth
+84fa4b72831a52b01f93a7417410b4649c84e7185ca9dc6363bd29a7b924871c  pretrained/evaluators/m3fd_last.pt
+```
+
+Use these SHA256 values when obtaining the evaluators from an external download location. The official SegFormer/YOLO prior links are listed in [DEPENDENCIES.md](DEPENDENCIES.md); those priors supply features inside the fusion model.
+
 The following commands use these fixed checkpoints. Their training entry points are also provided as `train_seg_fmb.py` and `train_yolo_m3fd.py`.
 
 Create a separate evaluation environment to keep the segmentation dependency's `timm` version separate from the fusion environment:
