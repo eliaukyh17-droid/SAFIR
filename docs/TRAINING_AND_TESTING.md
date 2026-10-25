@@ -1,6 +1,6 @@
 # Inference and training
 
-Install the fusion environment and download weights as described in [INSTALL.md](INSTALL.md). Run commands from the repository root.
+Install the fusion environment and download weights as described in [INSTALL.md](INSTALL.md). Dataset download sources and directory layouts are in [DATASETS.md](DATASETS.md). Run commands from the repository root.
 
 ## Inference
 

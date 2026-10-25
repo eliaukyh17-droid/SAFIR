@@ -1,6 +1,6 @@
 # Evaluation
 
-Install the fusion environment in [INSTALL.md](INSTALL.md) and download the final weights and matching frozen priors. Dataset images and annotations are obtained from their original providers. Run commands from the repository root.
+Install the fusion environment in [INSTALL.md](INSTALL.md) and download the final weights and matching frozen priors. Dataset sources, directory layouts, and sample-list requirements are described in [DATASETS.md](DATASETS.md). Run commands from the repository root.
 
 ## Dataset populations
 
