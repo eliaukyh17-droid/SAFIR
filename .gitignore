@@ -1,11 +1,16 @@
-# Model implementation and private research workspace stay outside this repository.
-/models/
+# Generated data, experiments, and local credentials.
 /private_audit/
 /experiments/
 /datasets/
 /pretrained/
 /output/
 /results/
+/runs/
+/checkpoints/
+/.venv/
+/.venv-eval/
+/build/
+/*.egg-info/
 .env
 .env.*
 *.pem

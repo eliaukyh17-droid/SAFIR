@@ -20,7 +20,7 @@
 
 </div>
 
-This repository provides SAFIR weights, reference training and inference scripts, method documentation, and paper visualizations.
+This repository provides the SAFIR and TIFDFusion model source, pretrained weights, staged training, paired-image inference, smoke synthesis, and evaluation tools.
 
 ## Overview
 
@@ -29,7 +29,7 @@ SAFIR combines the original **TIFDFusion** backbone with a conditional smoke-cor
 - `normal` returns the frozen backbone output exactly;
 - `smoke` applies a bounded residual correction and clips the result to `[0, 1]`.
 
-The condition is supplied by the caller. SAFIR does not infer it from the input images in the released A32 controlled candidate.
+The condition is supplied by the caller. `normal` preserves the original fusion mapping, while `smoke` activates the expert.
 
 ## Visual overview
 
@@ -74,67 +74,71 @@ The following qualitative panels are taken from the paper's fixed smoke comparis
   </tr>
 </table>
 
+
 ## Quick start
 
-### Download the final checkpoint
-
-Download **[`SAFIR_final.safetensors`](https://github.com/eliaukyh17-droid/SAFIR/releases/download/weights-v0.2.0/SAFIR_final.safetensors)** from the [weights-v0.2.0 release](https://github.com/eliaukyh17-droid/SAFIR/releases/tag/weights-v0.2.0). The release also contains `manifest.json`, `tensor_index.json`, and `SHA256SUMS`.
-
-### Verify the file
-
-From the repository root:
-
 ```bash
-python tools/verify_weights.py --root .
+git clone https://github.com/eliaukyh17-droid/SAFIR.git
+cd SAFIR
 ```
 
-The verifier checks the checkpoint against the published SHA256.
-
-### Inspect the retained tensor state
-
-After installing compatible PyTorch and `safetensors` packages:
+Follow **[Installation](docs/INSTALL.md)** to create a CPU or CUDA environment, then download the final checkpoint and matching pretrained priors:
 
 ```bash
-python tools/read_component_weights.py --component safir_final
+python -m tools.download_weights
+python -m safir.infer --visible datasets/MSRS/test/vi --infrared datasets/MSRS/test/ir --condition normal --output runs/msrs_clean --device cpu
 ```
 
-This command reports the consolidated tensor state.
+Use `--condition smoke` for smoke-degraded visible inputs. For Linux CUDA inference, use `--device cuda:0 --scan-backend cuda` after installing the documented Mamba wheel. `--save-base` also saves the TIFDFusion output for comparison. Input pairs must have matching filenames and spatial dimensions; outputs retain their original resolution.
 
-## What the checkpoint contains
+| Task | Entry point | Guide |
+| --- | --- | --- |
+| Fuse your image pairs | `python -m safir.infer` | [Inference and training](docs/TRAINING_AND_TESTING.md) |
+| Train the backbone and smoke expert | `python -m safir.train` | [Stage schedules and commands](docs/TRAINING_AND_TESTING.md) |
+| Generate smoke, infer, and evaluate | `python -m safir.benchmark` | [Benchmark and downstream tasks](docs/EVALUATION.md) |
+| Evaluate existing fusion outputs | `python -m safir.evaluate` | [Metric definitions](docs/EVALUATION.md) |
 
-`SAFIR_final.safetensors` is one consolidated snapshot of the final **SAFIR-A32-Controlled** candidate:
+## Pretrained model
 
-- 807 retained project-component tensors, including inherited frozen modules, auxiliary heads, alignment projections, and buffers;
-- native final-model state keys under the `state_dict.` prefix;
-- exact dtype, shape, and raw tensor-byte preservation relative to the verified source checkpoints.
+Download **[SAFIR_final.safetensors](https://github.com/eliaukyh17-droid/SAFIR/releases/download/weights-v0.2.0/SAFIR_final.safetensors)** from the [weights release](https://github.com/eliaukyh17-droid/SAFIR/releases/tag/weights-v0.2.0), or use the downloader above. The single file contains the retained state of all fusion and smoke-adaptation stages. The loader restores the matching SegFormer and YOLO priors from their official checkpoints and checks the complete model state.
 
-See the [checkpoint format](docs/WEIGHT_FORMAT.md) for tensor metadata and the [dependency notes](docs/DEPENDENCIES.md) for SegFormer/YOLO prior requirements.
+The release was checked against the original stage checkpoints: all **1,526 model tensors** match, and the reconstructed models produced identical outputs on the CPU comparison input. Real-image inference, fusion metrics, and one optimizer step for each smoke-adaptation stage were also checked. See [validation details](docs/VALIDATION.md).
+
+## Training and evaluation
+
+Training uses the supplied MSRS train/validation manifests. The six adaptation stages are exposed individually, with their original losses, seeds, and schedules. For a complete new training run, train the backbone first and pass each stage's checkpoint to the next stage.
+
+```bash
+python -m safir.train --stage base --msrs-root datasets/MSRS --output runs/base --device cuda:0 --scan-backend cuda
+```
+
+The benchmark covers clean, medium-smoke, and heavy-smoke inputs on MSRS, FMB, and M3FD, with TNO and RoadScene as extensions. Dataset paths are configured in `configs/benchmark.yaml`.
+
+```bash
+python -m safir.benchmark --datasets msrs fmb m3fd --output runs/benchmark --device cuda:0 --scan-backend cuda
+```
+
+The [evaluation guide](docs/EVALUATION.md) describes the 21 fusion metrics, reference-based recovery measures, fixed downstream evaluators, and their checkpoint status.
 
 ## Project updates
 
-We will continue updating this repository and upload additional project files and supporting materials in future releases.
-
-## Evaluation context
-
-The manuscript evaluates visible–infrared pairs from MSRS, FMB, and M3FD under clean and synthetic medium/heavy smoke, with TNO and RoadScene as an extension. Clean inputs use `normal`; smoke inputs use `smoke`; infrared inputs remain unchanged during smoke synthesis.
+- Model definitions, checkpoint loading, staged training, inference, smoke synthesis, and evaluation code are now available.
+- We will continue adding project files and supporting evaluation assets. The original fixed FMB segmentation and M3FD detection evaluator checkpoints are being prepared.
 
 ## Repository map
 
 | Path | Purpose |
 | --- | --- |
-| `docs/assets/` | Public architecture figures used in this README |
-| `weights/` | Final checkpoint notes and machine-readable tensor metadata |
-| `tools/verify_weights.py` | File-level checksum verification |
-| `tools/read_component_weights.py` | Tensor state inspection |
-| `reference_scripts/` | Reference training and inference entry points |
-| `docs/WEIGHT_FORMAT.md` | Consolidated checkpoint format |
-| `docs/TRAINING_AND_TESTING.md` | Training stages and inference script documentation |
-| `docs/DEPENDENCIES.md` | Third-party prior dependencies and release terms |
+| `models/` | TIFDFusion, TIFM, encoders/decoder, and SAFIR smoke expert |
+| `safir/` | Public model loader and inference/training/evaluation commands |
+| `data/` | Paired-image loading and deterministic smoke synthesis |
+| `configs/`, `manifests/` | Training schedules, benchmark paths, and sample splits |
+| `utils/` | Fusion metrics and training protocol utilities |
+| `weights/` | Checkpoint metadata and download information |
+| `docs/assets/` | Architecture figures and qualitative outputs from the paper |
+| `reference_scripts/` | Original archived training/inference runners |
+| `tests/` | Numerical, data, and checkpoint-loading checks |
 
-## Archived training stages
+## Attribution
 
-The A211, A213, A215, A217, A219, and A223 names identify historical training stages. Their retained project-component weights are consolidated into the final checkpoint.
-
-## Release terms
-
-No repository-wide reuse license has been assigned at this stage. Third-party components retain their own terms. Please cite the accompanying manuscript when using the released records or weights.
+Please cite the accompanying SAFIR manuscript when using this work. Third-party software and pretrained priors retain their own terms; see [third-party notices](THIRD_PARTY_NOTICES.md). No repository-wide reuse license has been assigned yet.

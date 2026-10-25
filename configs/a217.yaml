@@ -1,0 +1,376 @@
+model:
+  encoder:
+    vis_in_channels: 3
+    ir_in_channels: 1
+    channels:
+    - 64
+    - 128
+    - 256
+    - 512
+    cnn_depths:
+    - 2
+    - 2
+    mamba_depths:
+    - 2
+    - 2
+    d_state: 16
+    drop_path_rate: 0.1
+  tifm:
+    wavelet: haar
+    num_heads: 8
+    seg_prior_channels:
+    - 64
+    - 128
+    - 256
+    - 512
+    det_prior_channels:
+    - 64
+    - 128
+    - 256
+    - 512
+    use_smoke_reliability: false
+    use_frequency_router: false
+    use_prior_conditioning: false
+  decoder:
+    out_channels: 1
+    use_skip: true
+    decoder_norm: in
+  prior:
+    seg_model: ./pretrained/segformer-b2
+    det_model: ./pretrained/yolov8s.pt
+    freeze: true
+train:
+  phase1:
+    epochs: 50
+    lr: 0.0002
+    loss_weights:
+      pixel: 1.0
+      ssim: 1.0
+      gradient: 20.0
+      laplacian: 0.0
+      scd: 1.0
+      seg_quality: 0.0
+      det_quality: 0.0
+      smoke_consistency: 2.0
+      reliability: 0.5
+  phase2:
+    epochs: 30
+    lr: 0.0001
+    loss_weights:
+      pixel: 1.0
+      ssim: 1.0
+      gradient: 20.0
+      laplacian: 0.0
+      scd: 1.0
+      seg_quality: 0.0
+      det_quality: 0.0
+      smoke_consistency: 2.0
+      reliability: 0.5
+  phase3:
+    epochs: 20
+    lr: 5.0e-05
+    loss_weights:
+      pixel: 1.0
+      ssim: 1.0
+      gradient: 20.0
+      laplacian: 0.0
+      scd: 1.0
+      seg_quality: 0.0
+      det_quality: 0.0
+      smoke_consistency: 2.0
+      reliability: 0.5
+  pixel_adaptive_temperature: 5.0
+  batch_size: 8
+  num_workers: 4
+  optimizer: adamw
+  weight_decay: 0.0001
+  scheduler: cosine
+  warmup_epochs: 5
+  seed: 20260918
+  smoke_supervision:
+    enabled: true
+    use_clean_reference: true
+    use_clean_teacher: true
+  validation_enabled: false
+data:
+  msrs:
+    root: ./datasets/MSRS
+    train_split: train
+    test_split: test
+    img_size:
+    - 256
+    - 256
+    num_classes: 9
+    train_manifest: ./manifests/msrs_train_975.txt
+    val_manifest: ./manifests/msrs_val_108.txt
+    segformer_class_mapping: null
+    smoke:
+      enabled: true
+      probability: 1.0
+      severities:
+      - mild
+      - medium
+      - heavy
+      morphologies:
+      - local
+      - patchy
+      - diffuse
+      morphology_probabilities:
+      - 0.3
+      - 0.5
+      - 0.2
+      base_seed: 20260918
+      deterministic: false
+    validation_smoke:
+      enabled: true
+      probability: 1.0
+      severities:
+      - mild
+      - medium
+      - heavy
+      morphologies:
+      - local
+      - patchy
+      - diffuse
+      morphology_probabilities:
+      - 0.3
+      - 0.5
+      - 0.2
+      base_seed: 2320260905
+      deterministic: true
+  m3fd:
+    root: ./datasets/M3FD/M3FD_Detection
+    img_size:
+    - 640
+    - 640
+    num_classes: 6
+  tno:
+    root: ./datasets/tno
+    img_size:
+    - 256
+    - 256
+  roadscene:
+    root: ./datasets/roadscene
+    img_size:
+    - 256
+    - 256
+  llvip:
+    root: ./datasets/LLVIP
+    ir_subdir: infrared
+    vi_subdir: visible
+    img_size:
+    - 256
+    - 256
+  fmb:
+    root: ./datasets/FMB
+    ir_subdir: Infrared
+    vi_subdir: Visible
+    img_size:
+    - 256
+    - 256
+    num_classes: 14
+a211_scjsfe:
+  channels:
+  - 64
+  - 128
+  - 256
+  - 512
+  router_widths:
+  - 16
+  - 24
+  - 32
+  attention_heads: 4
+  batch_size: 8
+  num_workers: 4
+  learning_rate: 0.0001
+  weight_decay: 0.0001
+  gradient_clip: 1.0
+  schedule:
+    seed: 20260911
+    epochs: 5
+    router_warmup_epochs: 1
+    oracle_expert_epochs: 2
+    predicted_joint_epochs: 2
+  route_thresholds:
+    smoke_probability_min: 0.95
+    smoke_clean_margin_min: 0.8
+    uncertainty_max: 0.2
+    mask_coverage_min: 0.01
+  loss_weights:
+    teacher_smoke_region: 1.0
+    teacher_low_frequency: 1.0
+    canonical_clear_region: 1.0
+    visible_reconstruction: 1.0
+    infrared_reconstruction: 1.0
+    source_gradient: 1.0
+    unsupported_edge: 1.0
+    router_global: 1.0
+    router_local: 1.0
+    router_clean_negative: 2.0
+a213_router:
+  features:
+    router_stages:
+    - 0
+    - 1
+    - 2
+    router_widths:
+    - 16
+    - 24
+    - 32
+    evidence_channels: 7
+    statistics:
+    - mean
+    - std
+    - maximum
+    - top_tail_mean
+    top_tail_divisor: 16
+    dimension: 316
+    standardizer_source: paired_training_manifest_only
+    standard_deviation_floor: 1.0e-06
+    standardized_clip: 8.0
+  trainable:
+    module: router.score_head
+    in_features: 316
+    out_features: 1
+    parameters: 317
+    initialization: all_zero
+    three_way_logits:
+    - negative_score
+    - positive_score
+    - zero_unknown
+  schedule:
+    seed: 20260913
+    epochs: 5
+    batch_size: 8
+    standardizer_pairs: 968
+    learning_rate: 0.001
+    weight_decay: 0.0
+  loss:
+    binary_weight: 1.0
+    anchor_weight: 1.0
+    pair_weight: 1.0
+    anchor_margin: 4.0
+    pair_margin: 8.0
+  route_thresholds:
+    smoke_probability_min: 0.95
+    smoke_clean_margin_min: 0.8
+    uncertainty_max: 0.2
+    mask_coverage_min: 0.01
+  validation_smoke_seed: 2520260906
+a215_refiner:
+  protocol: A215_CANONICAL_ANCHORED_SOURCE_PRESERVING_REFINER_PHASE0
+  architecture:
+    evidence_channels: 12
+    width: 32
+    dilations:
+    - 1
+    - 2
+    - 4
+    normalization: group_norm_8
+    activation: silu
+    head_channels: 2
+    head_initialization: all_zero
+    trainable_parameters: 7714
+    lowpass_kernel: 7
+    highpass_mean_kernel: 3
+    low_residual_cap: 0.12
+    high_residual_cap: 0.03
+    total_residual_cap: 0.15
+    full_decoder_trainable: false
+    clean_hard_bypass: true
+    rejected_hard_bypass: true
+  loss_weights:
+    teacher_smoke_region: 1.0
+    teacher_low_frequency: 1.0
+    canonical_clear_region: 2.0
+    source_signed_gradient: 2.0
+    unsupported_edge: 2.0
+    canonical_gradient_floor: 2.0
+    local_variance_floor: 1.0
+    canonical_correlation: 0.5
+    residual_budget: 0.25
+    residual_high_frequency: 1.0
+  phase0_seed: 20260915
+  phase0_batch_size: 2
+  phase0_optimizer_steps: 2
+  phase0_learning_rate: 0.0001
+  phase0_weight_decay: 0.0
+a215_training:
+  protocol: A215_CANONICAL_ANCHORED_SOURCE_PRESERVING_REFINER_FIXED_5EP
+  schedule:
+    seed: 20260916
+    epochs: 5
+    batch_size: 2
+    trained_items_per_epoch: 974
+    learning_rate: 0.0001
+    weight_decay: 0.0
+    gradient_clip: 1.0
+    stage_sequence:
+    - oracle_support
+    - oracle_support
+    - frozen_support
+    - frozen_support
+    - frozen_support
+  validation_smoke_seed: 2520260906
+  train_manifest_samples: 975
+  validation_manifest_samples: 108
+  trainable_parameters: 7714
+  final_epoch: 4
+  candidate_selection: final_epoch_only
+  acceptance:
+    total_residual_cap: 0.15
+a217_support:
+  protocol: A217_MASK_SUPERVISED_MULTISCALE_SUPPORT_PREDICTOR_PHASE0
+  architecture:
+    router_feature_channels:
+    - 16
+    - 24
+    - 32
+    lateral_channels: 8
+    evidence_channels: 7
+    fusion_channels: 16
+    support_activation: sigmoid
+    support_roles:
+    - refiner_conditioning
+    - residual_multiplier
+    trainable_parameters: 5545
+    low_residual_cap: 0.12
+    high_residual_cap: 0.03
+    total_residual_cap: 0.15
+    clean_reject_exact_canonical: true
+  loss_weights:
+    smoke_bce: 1.0
+    soft_dice: 1.0
+    coverage: 1.0
+    clean_bce: 2.0
+    total_variation: 0.1
+  phase0:
+    seed: 20260917
+    batch_size: 2
+    optimizer: AdamW
+    learning_rate: 0.0001
+    weight_decay: 0.0
+    steps: 2
+    clean_validation_samples: 108
+a217_training:
+  protocol: A217_MASK_SUPERVISED_MULTISCALE_SUPPORT_PREDICTOR_FIXED_5EP
+  schedule:
+    seed: 20260918
+    epochs: 5
+    batch_size: 2
+    trained_items_per_epoch: 974
+    learning_rate: 0.0001
+    weight_decay: 0.0
+    gradient_clip: 1.0
+  loss_weights:
+    smoke_bce: 1.0
+    soft_dice: 1.0
+    coverage: 1.0
+    clean_bce: 2.0
+    total_variation: 0.1
+  validation_smoke_seed: 2520260906
+  train_manifest_samples: 975
+  validation_manifest_samples: 108
+  trainable_parameters: 5545
+  final_epoch: 4
+  candidate_selection: final_epoch_only

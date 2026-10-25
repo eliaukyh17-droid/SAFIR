@@ -6,8 +6,8 @@
   "repository": "https://github.com/eliaukyh17-droid/SAFIR",
   "release_tag": "weights-v0.2.0",
   "paper_candidate": "SAFIR-A32-Controlled",
-  "model_implementation_included": false,
-  "standalone_training_or_inference": false,
+  "model_implementation_included": true,
+  "standalone_training_or_inference": true,
   "legacy_archived_loader_compatible": false,
   "original_archive_released": false,
   "third_party_pretrained_backbones_included": false,
@@ -41,8 +41,16 @@
     "included_tensors": 807,
     "excluded_pretrained_backbone_tensors": 719,
     "included_raw_tensor_bytes": 191013961,
-    "verification_scope": "Bijective namespace mapping and dtype, shape and raw bytes compared with every retained source tensor",
+    "verification_scope": "Original weights-v0.2.0 export audit: bijective namespace mapping and dtype, shape, and raw bytes for retained tensors. Runtime checks are recorded separately in source_integration.validation.",
     "model_inference_performed": false,
     "training_performed": false
+  },
+  "runtime_requires_external_priors": true,
+  "source_integration": {
+    "date": "2026-10-25",
+    "model_loader": "safir/model.py",
+    "training_entry": "python -m safir.train",
+    "inference_entry": "python -m safir.infer",
+    "validation": "docs/VALIDATION.md"
   }
 }

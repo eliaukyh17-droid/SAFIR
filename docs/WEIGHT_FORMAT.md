@@ -27,10 +27,10 @@ prior_extractor.det_extractor.backbone.
 
 The container uses contiguous tensor storage. It does not preserve original checkpoint file bytes, Python objects, optimizer/report metadata, or storage alias relationships. The published SHA256 identifies the new consolidated file.
 
-## Loading boundary
+## Model loading
 
-`tools/read_component_weights.py --component safir_final` verifies the file and recovers its tensor state for inspection. The utility retains its existing filename and contains no model definitions.
+`safir.load_model` restores the public module hierarchy, combines the 807 retained tensors with the 719 tensors from the exact frozen priors, and performs strict state loading. See [inference instructions](TRAINING_AND_TESTING.md).
 
-The archived research runners expect original checkpoint hashes, metadata, and a different loading sequence. They cannot directly consume this asset. Running SAFIR would require the withheld model implementation, a compatible loader, the exact matching external priors, and the relevant configuration/protocol assets. Restoring a runnable model requires checking the complete reconstructed key set; permissive loading or substitute prior values would not establish equivalence to the frozen paper model.
+`tools/read_component_weights.py --component safir_final` remains available for tensor inspection. The original archived runners use the historical stage-checkpoint sequence; the public loader consumes the consolidated file directly.
 
-Validation of this export covers file integrity and retained tensor preservation. No model inference, training, or benchmark recomputation was performed, and no output-equivalence claim is made.
+The weights-v0.2.0 binary remains unchanged. The source-release checks compare all reconstructed tensors against the original checkpoints and include inference and training-step checks; see [VALIDATION.md](VALIDATION.md).

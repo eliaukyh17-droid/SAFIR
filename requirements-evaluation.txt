@@ -1,0 +1,11 @@
+# Install in a separate environment from the fusion runtime.
+# Install torch==2.4.1 and torchvision==0.19.1 first (see docs/EVALUATION.md).
+numpy==1.26.4
+Pillow==10.4.0
+PyYAML==6.0.2
+tqdm==4.66.5
+opencv-python==4.10.0.84
+ultralytics==8.3.40
+tensorboard==2.17.1
+timm==0.9.7
+segmentation-models-pytorch==0.3.4

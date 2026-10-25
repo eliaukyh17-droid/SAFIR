@@ -1,0 +1,42 @@
+# Paths are relative to the working directory. Download datasets from their authors.
+datasets:
+  msrs:
+    root: datasets/MSRS
+    visible: datasets/MSRS/test/vi
+    infrared: datasets/MSRS/test/ir
+    vi_subdir: vi
+    ir_subdir: ir
+    manifest: manifests/msrs_test_361.txt
+    count: 361
+  fmb:
+    root: datasets/FMB
+    visible: datasets/FMB/test/Visible
+    infrared: datasets/FMB/test/Infrared
+    vi_subdir: Visible
+    ir_subdir: Infrared
+    manifest: manifests/fmb_test_280.txt
+    count: 280
+  m3fd:
+    root: datasets/M3FD/M3FD_Detection
+    visible: datasets/M3FD/M3FD_Detection/vi
+    infrared: datasets/M3FD/M3FD_Detection/ir
+    vi_subdir: vi
+    ir_subdir: ir
+    manifest: manifests/m3fd_test_1050.txt
+    count: 1050
+  tno:
+    root: datasets/tno
+    visible: datasets/tno/vi
+    infrared: datasets/tno/ir
+    vi_subdir: vi
+    ir_subdir: ir
+    manifest: manifests/tno_test_37.txt
+    count: 37
+  roadscene:
+    root: datasets/roadscene
+    visible: datasets/roadscene/vi
+    infrared: datasets/roadscene/ir
+    vi_subdir: vi
+    ir_subdir: ir
+    manifest: manifests/roadscene_test_42.txt
+    count: 42

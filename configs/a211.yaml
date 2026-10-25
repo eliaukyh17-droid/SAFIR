@@ -1,0 +1,209 @@
+model:
+  encoder:
+    vis_in_channels: 3
+    ir_in_channels: 1
+    channels:
+    - 64
+    - 128
+    - 256
+    - 512
+    cnn_depths:
+    - 2
+    - 2
+    mamba_depths:
+    - 2
+    - 2
+    d_state: 16
+    drop_path_rate: 0.1
+  tifm:
+    wavelet: haar
+    num_heads: 8
+    seg_prior_channels:
+    - 64
+    - 128
+    - 256
+    - 512
+    det_prior_channels:
+    - 64
+    - 128
+    - 256
+    - 512
+    use_smoke_reliability: false
+    use_frequency_router: false
+    use_prior_conditioning: false
+  decoder:
+    out_channels: 1
+    use_skip: true
+    decoder_norm: in
+  prior:
+    seg_model: ./pretrained/segformer-b2
+    det_model: ./pretrained/yolov8s.pt
+    freeze: true
+train:
+  phase1:
+    epochs: 50
+    lr: 0.0002
+    loss_weights:
+      pixel: 1.0
+      ssim: 1.0
+      gradient: 20.0
+      laplacian: 0.0
+      scd: 1.0
+      seg_quality: 0.0
+      det_quality: 0.0
+      smoke_consistency: 2.0
+      reliability: 0.5
+  phase2:
+    epochs: 30
+    lr: 0.0001
+    loss_weights:
+      pixel: 1.0
+      ssim: 1.0
+      gradient: 20.0
+      laplacian: 0.0
+      scd: 1.0
+      seg_quality: 0.0
+      det_quality: 0.0
+      smoke_consistency: 2.0
+      reliability: 0.5
+  phase3:
+    epochs: 20
+    lr: 5.0e-05
+    loss_weights:
+      pixel: 1.0
+      ssim: 1.0
+      gradient: 20.0
+      laplacian: 0.0
+      scd: 1.0
+      seg_quality: 0.0
+      det_quality: 0.0
+      smoke_consistency: 2.0
+      reliability: 0.5
+  pixel_adaptive_temperature: 5.0
+  batch_size: 8
+  num_workers: 4
+  optimizer: adamw
+  weight_decay: 0.0001
+  scheduler: cosine
+  warmup_epochs: 5
+  seed: 20260911
+  smoke_supervision:
+    enabled: true
+    use_clean_reference: true
+    use_clean_teacher: true
+  validation_enabled: false
+data:
+  msrs:
+    root: ./datasets/MSRS
+    train_split: train
+    test_split: test
+    img_size:
+    - 256
+    - 256
+    num_classes: 9
+    train_manifest: ./manifests/msrs_train_975.txt
+    val_manifest: ./manifests/msrs_val_108.txt
+    segformer_class_mapping: null
+    smoke:
+      enabled: true
+      probability: 1.0
+      severities:
+      - mild
+      - medium
+      - heavy
+      morphologies:
+      - local
+      - patchy
+      - diffuse
+      morphology_probabilities:
+      - 0.3
+      - 0.5
+      - 0.2
+      base_seed: 20260911
+      deterministic: false
+    validation_smoke:
+      enabled: true
+      probability: 1.0
+      severities:
+      - mild
+      - medium
+      - heavy
+      morphologies:
+      - local
+      - patchy
+      - diffuse
+      morphology_probabilities:
+      - 0.3
+      - 0.5
+      - 0.2
+      base_seed: 2320260905
+      deterministic: true
+  m3fd:
+    root: ./datasets/M3FD/M3FD_Detection
+    img_size:
+    - 640
+    - 640
+    num_classes: 6
+  tno:
+    root: ./datasets/tno
+    img_size:
+    - 256
+    - 256
+  roadscene:
+    root: ./datasets/roadscene
+    img_size:
+    - 256
+    - 256
+  llvip:
+    root: ./datasets/LLVIP
+    ir_subdir: infrared
+    vi_subdir: visible
+    img_size:
+    - 256
+    - 256
+  fmb:
+    root: ./datasets/FMB
+    ir_subdir: Infrared
+    vi_subdir: Visible
+    img_size:
+    - 256
+    - 256
+    num_classes: 14
+a211_scjsfe:
+  channels:
+  - 64
+  - 128
+  - 256
+  - 512
+  router_widths:
+  - 16
+  - 24
+  - 32
+  attention_heads: 4
+  batch_size: 8
+  num_workers: 4
+  learning_rate: 0.0001
+  weight_decay: 0.0001
+  gradient_clip: 1.0
+  schedule:
+    seed: 20260911
+    epochs: 5
+    router_warmup_epochs: 1
+    oracle_expert_epochs: 2
+    predicted_joint_epochs: 2
+  route_thresholds:
+    smoke_probability_min: 0.95
+    smoke_clean_margin_min: 0.8
+    uncertainty_max: 0.2
+    mask_coverage_min: 0.01
+  loss_weights:
+    teacher_smoke_region: 1.0
+    teacher_low_frequency: 1.0
+    canonical_clear_region: 1.0
+    visible_reconstruction: 1.0
+    infrared_reconstruction: 1.0
+    source_gradient: 1.0
+    unsupported_edge: 1.0
+    router_global: 1.0
+    router_local: 1.0
+    router_clean_negative: 2.0

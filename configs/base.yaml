@@ -1,0 +1,156 @@
+model:
+  encoder:
+    vis_in_channels: 3
+    ir_in_channels: 1
+    channels:
+    - 64
+    - 128
+    - 256
+    - 512
+    cnn_depths:
+    - 2
+    - 2
+    mamba_depths:
+    - 2
+    - 2
+    d_state: 16
+    drop_path_rate: 0.1
+  tifm:
+    wavelet: haar
+    num_heads: 8
+    seg_prior_channels:
+    - 64
+    - 128
+    - 256
+    - 512
+    det_prior_channels:
+    - 64
+    - 128
+    - 256
+    - 512
+    use_smoke_reliability: false
+    use_frequency_router: false
+    use_prior_conditioning: false
+  decoder:
+    out_channels: 1
+    use_skip: true
+    decoder_norm: in
+  prior:
+    seg_model: ./pretrained/segformer-b2
+    det_model: ./pretrained/yolov8s.pt
+    freeze: true
+train:
+  phase1:
+    epochs: 50
+    lr: 0.0002
+    loss_weights:
+      pixel: 1.0
+      ssim: 1.0
+      gradient: 20.0
+      laplacian: 0.0
+      scd: 1.0
+      seg_quality: 0.0
+      det_quality: 0.0
+  phase2:
+    epochs: 30
+    lr: 0.0001
+    loss_weights:
+      pixel: 1.0
+      ssim: 1.0
+      gradient: 20.0
+      laplacian: 0.0
+      scd: 1.0
+      seg_quality: 0.0
+      det_quality: 0.0
+  phase3:
+    epochs: 20
+    lr: 5.0e-05
+    loss_weights:
+      pixel: 1.0
+      ssim: 1.0
+      gradient: 20.0
+      laplacian: 0.0
+      scd: 1.0
+      seg_quality: 0.0
+      det_quality: 0.0
+  pixel_adaptive_temperature: 5.0
+  batch_size: 8
+  num_workers: 4
+  optimizer: adamw
+  weight_decay: 0.0001
+  scheduler: cosine
+  warmup_epochs: 5
+  seed: 2026
+data:
+  msrs:
+    root: ./datasets/MSRS
+    train_split: train
+    test_split: test
+    img_size:
+    - 256
+    - 256
+    num_classes: 9
+    train_manifest: ./manifests/msrs_train_975.txt
+    val_manifest: ./manifests/msrs_val_108.txt
+    segformer_class_mapping: null
+    smoke:
+      enabled: false
+      probability: 0.5
+      severities:
+      - mild
+      - medium
+      - heavy
+      morphologies:
+      - local
+      - patchy
+      - diffuse
+      morphology_probabilities:
+      - 0.3
+      - 0.5
+      - 0.2
+      base_seed: 2026
+      deterministic: false
+    validation_smoke:
+      enabled: false
+      probability: 1.0
+      severities:
+      - mild
+      - medium
+      - heavy
+      morphologies:
+      - patchy
+      morphology_probabilities:
+      - 1.0
+      base_seed: 12026
+      deterministic: true
+  m3fd:
+    root: ./datasets/M3FD/M3FD_Detection
+    img_size:
+    - 640
+    - 640
+    num_classes: 6
+  tno:
+    root: ./datasets/tno
+    img_size:
+    - 256
+    - 256
+  roadscene:
+    root: ./datasets/roadscene
+    img_size:
+    - 256
+    - 256
+  llvip:
+    root: ./datasets/LLVIP
+    ir_subdir: infrared
+    vi_subdir: visible
+    img_size:
+    - 256
+    - 256
+  fmb:
+    root: ./datasets/FMB
+    ir_subdir: Infrared
+    vi_subdir: Visible
+    img_size:
+    - 256
+    - 256
+    num_classes: 14

@@ -1,0 +1,105 @@
+[
+  {
+    "source": "train_a211_scjsfe_probe.py",
+    "source_sha256": "953a162507d36976acc5b7ad5e9bfad9e855ae34eba15290a3d007ccb7ad760f",
+    "public": "safir/training/a211_scjsfe_probe.py",
+    "selected_definitions": [
+      "train_epoch",
+      "manifest_stems",
+      "seed_worker",
+      "masked_mean",
+      "add_metrics",
+      "make_train_loader",
+      "luminance",
+      "seed_everything",
+      "gradient_magnitude",
+      "compute_training_loss",
+      "set_stage_trainability",
+      "low_pass",
+      "masked_l1",
+      "validate_manifests",
+      "router_losses"
+    ]
+  },
+  {
+    "source": "train_a213_multiscale_standardized_router.py",
+    "source_sha256": "7653948bc7cd7a0b6c9a2e99307e23a4d14ffae031756879fb0eb58b292a9963",
+    "public": "safir/training/a213_multiscale_standardized_router.py",
+    "selected_definitions": [
+      "fit_training_standardizer",
+      "standardizer_state",
+      "make_a213_train_loader",
+      "standardizer_sha256",
+      "train_epoch"
+    ]
+  },
+  {
+    "source": "train_a215_source_preserving_refiner.py",
+    "source_sha256": "8d4fe93fb39c9d0af270d388fcbbce1054116ecfac9950fc72e4b8debd7c1033",
+    "public": "safir/training/a215_source_preserving_refiner.py",
+    "selected_definitions": [
+      "train_epoch",
+      "compute_training_loss",
+      "make_a215_train_loader"
+    ]
+  },
+  {
+    "source": "train_a217_mask_supervised_support.py",
+    "source_sha256": "3e60f0ed6a6162f2106a79eb7cb494185890d44be2ca5d078423dfb258b56268",
+    "public": "safir/training/a217_mask_supervised_support.py",
+    "selected_definitions": [
+      "compute_training_loss",
+      "train_epoch",
+      "make_a217_train_loader"
+    ]
+  },
+  {
+    "source": "tools\\preflight_a217_mask_supervised_support.py",
+    "source_sha256": "eac75c04f2398a9bd4135d9816688d750245f01aa4041ba004b5b85a0381ad8b",
+    "public": "safir/training/preflight_a217_mask_supervised_support.py",
+    "selected_definitions": [
+      "predictor_inputs"
+    ]
+  },
+  {
+    "source": "train_a219_dual_support_benefit_rescue.py",
+    "source_sha256": "5f402208fc99fe23c3dbd5a30cdb65c7f402d12db923e0ffdef1dc2ab71f7f85",
+    "public": "safir/training/a219_dual_support_benefit_rescue.py",
+    "selected_definitions": [
+      "compute_training_loss",
+      "train_epoch",
+      "make_a219_train_loader"
+    ]
+  },
+  {
+    "source": "tools\\preflight_a219_dual_support_benefit_rescue.py",
+    "source_sha256": "4adf8323d986a2bc55230a2c68552b3ab41553676e01b981e4236aea4efb0061",
+    "public": "safir/training/preflight_a219_dual_support_benefit_rescue.py",
+    "selected_definitions": [
+      "benefit_target"
+    ]
+  },
+  {
+    "source": "train_a223_dual_semantic_utility.py",
+    "source_sha256": "9462fbe86c2883f5eeeba175bd4f18f851776ac0a431b43e1274cdc517a12920",
+    "public": "safir/training/a223_dual_semantic_utility.py",
+    "selected_definitions": [
+      "compute_training_loss",
+      "train_epoch",
+      "make_train_loader"
+    ]
+  },
+  {
+    "source": "train.py",
+    "source_sha256": "0ffda936a6dcc1b8acc879afce1a53149d52a866b76bb22d847f1430934adcca",
+    "public": "safir/training/backbone.py",
+    "selected_definitions": [
+      "validate",
+      "train_one_epoch",
+      "save_checkpoint",
+      "forward_smoke_aware",
+      "run_phase",
+      "get_gpu_memory_mb"
+    ]
+  }
+]

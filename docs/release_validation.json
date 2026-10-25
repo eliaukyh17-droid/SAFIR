@@ -1,0 +1,76 @@
+{
+  "original_checkpoint_comparison": {
+    "tensors": 1526,
+    "unequal": []
+  },
+  "original_output_max_difference": 0.0,
+  "training_steps": {
+    "a211": {
+      "loss": 5.497861385345459,
+      "trainable_parameters": 5278945,
+      "updated": true
+    },
+    "a213": {
+      "loss": 12.71163272857666,
+      "trainable_parameters": 317,
+      "updated": true
+    },
+    "a215": {
+      "loss": 0.42871516942977905,
+      "trainable_parameters": 7714,
+      "updated": true
+    },
+    "a217": {
+      "loss": 2.932981252670288,
+      "trainable_parameters": 5545,
+      "updated": true
+    },
+    "a219": {
+      "loss": 5.8575029373168945,
+      "trainable_parameters": 19662,
+      "updated": true
+    },
+    "a223": {
+      "loss": 3.9820892810821533,
+      "trainable_parameters": 19682,
+      "updated": true
+    }
+  },
+  "validation_environment": {
+    "date": "2026-10-25",
+    "platform": "Windows",
+    "python": "3.12.14",
+    "torch": "2.4.1+cpu",
+    "scan_backend": "reference"
+  },
+  "backbone_training_step": {
+    "phase": 1,
+    "batch_size": 2,
+    "image_size": [
+      64,
+      64
+    ],
+    "device": "cpu",
+    "scan_backend": "reference",
+    "torch": "2.4.1+cpu",
+    "loss": 40.333614349365234,
+    "output_shape": [
+      2,
+      1,
+      64,
+      64
+    ],
+    "trainable_parameters": 42413193,
+    "finite_gradients": true,
+    "frozen_priors_have_no_gradients": true,
+    "encoder_parameter_updated": true,
+    "seconds": 9.446951000019908
+  },
+  "automated_tests": {
+    "date": "2026-10-25",
+    "passed": 32,
+    "skipped": 1,
+    "failed": 0,
+    "skip_reason": "CUDA selective-scan comparison requires a CUDA device"
+  }
+}
