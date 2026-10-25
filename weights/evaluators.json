@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "release_tag": "evaluators-v1.0.0",
+  "role": "Fixed downstream task evaluators shared across fusion methods and conditions",
+  "checkpoints": [
+    {
+      "id": "fmb_segmentation_evaluator",
+      "file": "pretrained/evaluators/fmb_final.pth",
+      "original_experiment_file": "downstream_experiments/fmb_segmentation_final/tifdfusion/final.pth",
+      "architecture": "DeepLabV3Plus/resnet50",
+      "dataset": "FMB",
+      "num_classes": 15,
+      "sha256": "662fb68a5d58e1f49df303119a1ddf040a662c2ecd1cdd7155dda44111d224be",
+      "size_bytes": 107063230,
+      "download_url": "https://github.com/eliaukyh17-droid/SAFIR/releases/download/evaluators-v1.0.0/fmb_final.pth"
+    },
+    {
+      "id": "m3fd_detection_evaluator",
+      "file": "pretrained/evaluators/m3fd_last.pt",
+      "original_experiment_file": "downstream_experiments/m3fd_detection_final/training/tifdfusion/weights/last.pt",
+      "architecture": "YOLOv8s",
+      "dataset": "M3FD",
+      "num_classes": 6,
+      "sha256": "84fa4b72831a52b01f93a7417410b4649c84e7185ca9dc6363bd29a7b924871c",
+      "size_bytes": 22517145,
+      "download_url": "https://github.com/eliaukyh17-droid/SAFIR/releases/download/evaluators-v1.0.0/m3fd_last.pt"
+    }
+  ]
+}

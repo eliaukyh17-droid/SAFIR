@@ -68,9 +68,15 @@
   },
   "automated_tests": {
     "date": "2026-10-25",
-    "passed": 32,
+    "passed": 39,
     "skipped": 1,
     "failed": 0,
     "skip_reason": "CUDA selective-scan comparison requires a CUDA device"
+  },
+  "downstream_evaluators": {
+    "release_tag": "evaluators-v1.0.0",
+    "validation": "docs/evaluator_validation.json",
+    "hashes_match_final_evaluation_protocol": true,
+    "cpu_forward_checks_passed": true
   }
 }

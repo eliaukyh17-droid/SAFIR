@@ -41,7 +41,7 @@ python -m pytest -q
 
 Tests cover smoke determinism, metric conventions, image pairing and native-resolution I/O, strict checkpoint restoration, selective-scan recurrence and gradients, and stage-checkpoint round trips.
 
-On 2026-10-25, the suite completed with **32 passed, 1 skipped, 0 failed**, including the released-model integration test. The skipped test requires CUDA. Counts and the backbone step result are recorded in [release_validation.json](release_validation.json).
+On 2026-10-25, the suite completed with **39 passed, 1 skipped, 0 failed**, including the released-model integration test and download-integrity tests. The skipped test requires CUDA. Counts and the backbone step result are recorded in [release_validation.json](release_validation.json).
 
 Set these environment variables to include the released-model integration test:
 
@@ -52,6 +52,12 @@ SAFIR_TEST_YOLO=pretrained/yolov8s.pt
 ```
 
 The integration test verifies strict loading, the exact normal-path return, smoke-path execution, finite output, the 0.15 correction bound, and rejection of an unknown condition. The CUDA comparison runs when CUDA and `mamba-ssm` are available.
+
+## Fixed downstream evaluator checks
+
+The original FMB and M3FD checkpoints were checked against the final-evaluation protocol's SHA256 values. In the separate evaluation environment, the FMB state loaded strictly with 379 tensors and produced a finite `[1, 15, 64, 64]` output for a `[1, 3, 64, 64]` CPU input. The M3FD checkpoint loaded with the six expected classes and produced finite predictions. Environment versions, class names, and output dimensions are recorded in [evaluator_validation.json](evaluator_validation.json).
+
+The [evaluator release](https://github.com/eliaukyh17-droid/SAFIR/releases/tag/evaluators-v1.0.0) provides both exact files. The download tests cover asset-group selection, manifest agreement, reuse of a correct existing file, and rejection of damaged downloads.
 
 ## Remaining evaluation runs
 

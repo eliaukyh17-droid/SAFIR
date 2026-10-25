@@ -41,7 +41,7 @@ python -m tools.download_weights
 python tools/verify_weights.py --root .
 ```
 
-This downloads the final fusion state, SegFormer-B2 configuration and weights, and the exact YOLOv8s prior. Every file is SHA256-checked. Downloads can be restricted with `--only fusion` or `--only priors`. Existing files are verified and reused.
+This downloads the final fusion state, SegFormer-B2 configuration and weights, the exact YOLOv8s prior, and the fixed FMB/M3FD downstream evaluators. Every file is SHA256-checked. Downloads can be restricted with `--only fusion`, `--only priors`, or `--only evaluators`. Existing files are verified and reused. `tools/verify_weights.py` verifies the fusion checkpoint; the downloader also verifies priors and evaluators when reusing their files.
 
 The downloader obtains third-party priors directly from their authors. A newer YOLO checkpoint with the same filename can have different bytes; use the pinned version in the downloader. See [dependencies](DEPENDENCIES.md).
 

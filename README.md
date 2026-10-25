@@ -127,12 +127,17 @@ The benchmark covers clean, medium-smoke, and heavy-smoke inputs on MSRS, FMB, a
 python -m safir.benchmark --datasets msrs fmb m3fd --output runs/benchmark --device cuda:0 --scan-backend cuda
 ```
 
-The [evaluation guide](docs/EVALUATION.md) describes the 21 fusion metrics, reference-based recovery measures, fixed downstream evaluators, and their checkpoint status.
+The [evaluation guide](docs/EVALUATION.md) describes the 21 fusion metrics, reference-based recovery measures, and fixed downstream evaluators. Download the original FMB segmentation and M3FD detection checkpoints from the [evaluator release](https://github.com/eliaukyh17-droid/SAFIR/releases/tag/evaluators-v1.0.0), or run:
+
+```bash
+python -m tools.download_weights --only evaluators
+```
 
 ## Project updates
 
 - Model definitions, checkpoint loading, staged training, inference, smoke synthesis, and evaluation code are now available.
-- We will continue adding project files and supporting evaluation assets. The original fixed FMB segmentation and M3FD detection evaluator checkpoints are being prepared.
+- The original fixed FMB segmentation and M3FD detection evaluator checkpoints are available with verified SHA256 values.
+- We will continue adding project files and supporting evaluation assets.
 
 ## Repository map
 

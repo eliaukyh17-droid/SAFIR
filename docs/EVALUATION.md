@@ -46,12 +46,16 @@ Optional `--clean-base path/to/clean/base` adds `Recovery_MAE`, `Recovery_PSNR`,
 
 ## Fixed downstream evaluators
 
-Segmentation and detection use trained evaluation models that remain fixed across fusion methods and smoke conditions. They are separate from the SegFormer/YOLO feature priors downloaded for fusion. The original evaluation checkpoints are being prepared for release:
+Segmentation and detection use trained evaluation models that remain fixed across fusion methods and smoke conditions. They are separate from the SegFormer/YOLO feature priors downloaded for fusion. Download the exact original checkpoints from the [evaluator release](https://github.com/eliaukyh17-droid/SAFIR/releases/tag/evaluators-v1.0.0), or run:
 
-| Evaluator | Original experiment file | Release destination |
+```bash
+python -m tools.download_weights --only evaluators
+```
+
+| Evaluator | Download | Local destination |
 | --- | --- | --- |
-| FMB DeepLabV3+, ResNet-50, 15 classes | `downstream_experiments/fmb_segmentation_final/tifdfusion/final.pth` | `pretrained/evaluators/fmb_final.pth` |
-| M3FD YOLOv8s, six classes | `downstream_experiments/m3fd_detection_final/training/tifdfusion/weights/last.pt` | `pretrained/evaluators/m3fd_last.pt` |
+| FMB DeepLabV3+, ResNet-50, 15 classes | [fmb_final.pth](https://github.com/eliaukyh17-droid/SAFIR/releases/download/evaluators-v1.0.0/fmb_final.pth) | `pretrained/evaluators/fmb_final.pth` |
+| M3FD YOLOv8s, six classes | [m3fd_last.pt](https://github.com/eliaukyh17-droid/SAFIR/releases/download/evaluators-v1.0.0/m3fd_last.pt) | `pretrained/evaluators/m3fd_last.pt` |
 
 Both files were produced by the project's reference task training and subsequently frozen for scoring all fusion methods. FMB training initializes the ResNet-50 encoder with ImageNet weights; M3FD training initializes YOLOv8s with COCO weights. The final evaluation protocol records these trained checkpoint identities:
 
@@ -60,7 +64,7 @@ Both files were produced by the project's reference task training and subsequent
 84fa4b72831a52b01f93a7417410b4649c84e7185ca9dc6363bd29a7b924871c  pretrained/evaluators/m3fd_last.pt
 ```
 
-Use these SHA256 values when obtaining the evaluators from an external download location. The official SegFormer/YOLO prior links are listed in [DEPENDENCIES.md](DEPENDENCIES.md); those priors supply features inside the fusion model.
+The downloader checks these SHA256 values. [weights/evaluators.json](../weights/evaluators.json) records their original experiment paths, file sizes, class counts, and download URLs. The official SegFormer/YOLO prior links are listed in [DEPENDENCIES.md](DEPENDENCIES.md); those priors supply features inside the fusion model.
 
 The following commands use these fixed checkpoints. Their training entry points are also provided as `train_seg_fmb.py` and `train_yolo_m3fd.py`.
 

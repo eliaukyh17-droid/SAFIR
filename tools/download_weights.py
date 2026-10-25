@@ -1,4 +1,4 @@
-"""Download the released fusion checkpoint and exact official pretrained priors."""
+"""Download SAFIR weights, exact official priors, and fixed downstream evaluators."""
 import argparse
 import hashlib
 from pathlib import Path
@@ -11,6 +11,8 @@ FILES=[
  ('pretrained/yolov8s.pt','https://github.com/ultralytics/assets/releases/download/v8.1.0/yolov8s.pt','268e5bb54c640c96c3510224833bc2eeacab4135c6deb41502156e39986b562d'),
  ('pretrained/segformer-b2/pytorch_model.bin',SEG_BASE+'pytorch_model.bin','584d72ace8c17c5683c198e1a4c3eda2e1026bafc02711ac5e5a4dc097bd05fe'),
  ('pretrained/segformer-b2/config.json',SEG_BASE+'config.json','3bafe3a84c87270732bb383f6ef33801d1cd441907da8cedc2c8a4986276945d'),
+ ('pretrained/evaluators/fmb_final.pth','https://github.com/eliaukyh17-droid/SAFIR/releases/download/evaluators-v1.0.0/fmb_final.pth','662fb68a5d58e1f49df303119a1ddf040a662c2ecd1cdd7155dda44111d224be'),
+ ('pretrained/evaluators/m3fd_last.pt','https://github.com/eliaukyh17-droid/SAFIR/releases/download/evaluators-v1.0.0/m3fd_last.pt','84fa4b72831a52b01f93a7417410b4649c84e7185ca9dc6363bd29a7b924871c'),
 ]
 
 
@@ -42,11 +44,12 @@ def download(path,url,expected):
 def main():
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument('--root',type=Path,default=Path('.'))
-    p.add_argument('--only',choices=['all','fusion','priors'],default='all')
+    p.add_argument('--only',choices=['all','fusion','priors','evaluators'],default='all')
     args=p.parse_args()
     for name,url,expected in FILES:
-        if args.only=='fusion' and not name.startswith('weights/'):continue
-        if args.only=='priors' and not name.startswith('pretrained/'):continue
+        group = ('evaluators' if name.startswith('pretrained/evaluators/')
+                 else 'fusion' if name.startswith('weights/') else 'priors')
+        if args.only != 'all' and args.only != group:continue
         download(args.root/name,url,expected)
 
 

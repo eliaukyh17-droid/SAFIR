@@ -1,0 +1,57 @@
+{
+  "environment": {
+    "python": "3.12.14",
+    "torch": "2.4.1+cpu",
+    "timm": "0.9.7",
+    "smp": "0.3.4",
+    "ultralytics": "8.3.40",
+    "device": "cpu",
+    "shared_dependencies": "Read-only fusion runtime site-packages; timm/SMP and their encoder dependencies installed in separate evaluator venv."
+  },
+  "fmb": {
+    "sha256": "662fb68a5d58e1f49df303119a1ddf040a662c2ecd1cdd7155dda44111d224be",
+    "tensors": 379,
+    "missing_keys": [],
+    "unexpected_keys": [],
+    "classes": 15,
+    "input_shape": [
+      1,
+      3,
+      64,
+      64
+    ],
+    "output_shape": [
+      1,
+      15,
+      64,
+      64
+    ],
+    "finite_output": true,
+    "elapsed_seconds": 0.7029999999795109
+  },
+  "m3fd": {
+    "sha256": "84fa4b72831a52b01f93a7417410b4649c84e7185ca9dc6363bd29a7b924871c",
+    "classes": 6,
+    "class_names": {
+      "0": "People",
+      "1": "Car",
+      "2": "Bus",
+      "3": "Motorcycle",
+      "4": "Lamp",
+      "5": "Truck"
+    },
+    "input_shape": [
+      1,
+      3,
+      64,
+      64
+    ],
+    "output_shape": [
+      1,
+      10,
+      84
+    ],
+    "finite_output": true,
+    "elapsed_seconds": 0.09299999999348074
+  }
+}
